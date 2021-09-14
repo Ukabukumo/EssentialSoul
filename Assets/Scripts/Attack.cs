@@ -7,16 +7,26 @@ public class Attack : MonoBehaviour
     [SerializeField] private GameObject aimPref;
     [SerializeField] private GameObject targetPref;
     [SerializeField] private GameObject attackBackgroundPref;
+    [SerializeField] private GameObject armorPref;
+    private GameObject storage;
     private GameObject aim;
-    private GameObject target;
-    private GameObject attackBackground;
     private float attackTime;
-    private int factor;
+    private int playerDamage;
+    private int enemyHealth;
+    private int enemyArmor;
 
-    public void AttackInit(float _attackTime)
+    public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, int _enemyArmor)
     {
+        attackTime = _attackTime;
+        playerDamage = _playerDamage;
+        enemyHealth = _enemyHealth;
+        enemyArmor = _enemyArmor;
+
+        // Хранилище для объектов сцены
+        storage = new GameObject("Storage");
+
         // Создание фона
-        attackBackground = Instantiate(attackBackgroundPref, new Vector3(0f, 0f, -1f), Quaternion.identity);
+        Instantiate(attackBackgroundPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
 
         // Создание прицела
         int _angle = UnityEngine.Random.Range(0, 360);
@@ -25,24 +35,24 @@ public class Attack : MonoBehaviour
         aim = Instantiate(aimPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity);
 
         // Создание цели
-        target = Instantiate(targetPref, new Vector3(0, 0, -1.1f), Quaternion.identity);
+        Instantiate(targetPref, new Vector3(0, 0, -1.1f), Quaternion.identity, storage.transform);
+
+        // Создание защиты противника
+        GenArmor(enemyArmor);
         
-        attackTime = _attackTime;
         StartCoroutine("AttackTimer");
+        StartCoroutine("CheckShoot");
     }
 
     // Таймер атаки
     IEnumerator AttackTimer()
     {
-        while (attackTime > 0)
+        while (!IsEnd())
         {
-            yield return new WaitForSeconds(0.01f);
-            attackTime -= 0.01f;
-            Debug.Log(Math.Round(attackTime, 2));
+            yield return new WaitForFixedUpdate();
+            attackTime -= Time.fixedDeltaTime;
+            //Debug.Log(attackTime);
         }
-
-        // Получение заработанных очков
-        factor = aim.GetComponent<Aim>().GetPoints();
 
         ClearScene();
     }
@@ -50,39 +60,66 @@ public class Attack : MonoBehaviour
     // Очистка сцены
     private void ClearScene()
     {
+        if (storage != null)
+        {
+            Destroy(storage);
+        }
+
         if (aim != null)
         {
             Destroy(aim);
-        }
-
-        if (target != null)
-        {
-            Destroy(target);
-        }
-        
-        if (attackBackground != null)
-        {
-            Destroy(attackBackground);
         }
     }
 
     // Проверка окончания миниигры
     public bool IsEnd()
     {
-        if (attackTime > 0)
+        // Если закончилось время или здоровье противника упало до нуля
+        if ( (attackTime <= 0) || (enemyHealth <= 0) )
         {
-            return false;
+            return true;
         }
 
         else
         {
-            return true;
+            return false;
         }
     }
 
-    // Получение коэффициента урона
-    public int GetFactor()
+    // Проверка выстрела
+    IEnumerator CheckShoot()
     {
-        return factor;
+        while (!IsEnd())
+        {
+            yield return new WaitForFixedUpdate();
+
+            if (aim != null)
+            {
+                CountDamage(aim.GetComponent<AimMain>().Shoot());
+            }
+        }
+    }
+
+    // Подсчёт нанесённого урона
+    private void CountDamage(int _points)
+    {
+        enemyHealth -= _points * playerDamage;
+    }
+
+    // Получение здоровья противника
+    public int GetEnemyHealth()
+    {
+        return enemyHealth;
+    }
+
+    // Генерация защиты противника
+    private void GenArmor(int _num)
+    {
+        for (int i = 0; i < _num; i++)
+        {
+            Instantiate(armorPref, new Vector3(0f, 0f, -1.2f), Quaternion.identity, storage.transform);
+        }
+
+        
     }
 }

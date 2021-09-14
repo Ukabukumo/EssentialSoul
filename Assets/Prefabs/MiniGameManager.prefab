@@ -46,3 +46,4 @@ MonoBehaviour:
   aimPref: {fileID: 1117093681022713808, guid: 3c74c034efe7f4843889661d22118c6d, type: 3}
   targetPref: {fileID: 4713315193619738144, guid: aa6ed6dab38dd98459d9342f4c4bac17, type: 3}
   attackBackgroundPref: {fileID: 6519902514912974979, guid: 019955bd62803824f85a9899d3a90d38, type: 3}
+  armorPref: {fileID: 5152359543407783019, guid: b2f97b1fbeee08343becadb38bc45917, type: 3}

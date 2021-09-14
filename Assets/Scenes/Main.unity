@@ -1711,7 +1711,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   forestLocation: {fileID: 6903748202482424633, guid: 88d0ac751cf06994baea37803ae6b66c, type: 3}
-  currentLocation: {fileID: 0}
 --- !u!114 &1728450646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1726,7 +1725,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 482892723}
   battleBackground: {fileID: 726889192}
-  attackBackground: {fileID: 6519902514912974979, guid: 019955bd62803824f85a9899d3a90d38, type: 3}
   attackButton: {fileID: 510137533}
   defenseButton: {fileID: 1686160532}
   itemsButton: {fileID: 690172303}

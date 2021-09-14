@@ -5,15 +5,11 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     private float distance = 0f;
-    private bool canMove = true;
+    private int damage = 1;
 
     private void FixedUpdate()
     {
-        if (canMove)
-        {
-            Movement();
-        }
-
+        Movement();
         BorderCrossing();
     }
 
@@ -35,8 +31,8 @@ public class Player : MonoBehaviour
     {
         float _x = transform.position.x;
         float _y = transform.position.y;
-        float _offset = 1f;               // –ассто€ние смещени€ при переходе через границу
-        float _border = 18f;              // –ассто€ние от центра до границы локации
+        float _offset = 2f;               // –ассто€ние смещени€ при переходе через границу
+        float _border = 20f;              // –ассто€ние от центра до границы локации
 
         // ѕрава€ или лева€ граница локации
         if (Mathf.Abs(_x) >= _border)
@@ -62,13 +58,21 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(_x, _y, transform.position.z);
     }
 
+    // ѕолучение пройденной дистанции
     public float GetDistance()
     {
         return distance;
     }
 
+    // ќбнуление пройденной дистанции
     public void ZeroDistance()
     {
         distance = 0f;
+    }
+
+    // ѕолучение урона игрока
+    public int GetDamage()
+    {
+        return damage;
     }
 }

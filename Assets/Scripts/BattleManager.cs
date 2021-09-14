@@ -17,12 +17,13 @@ public class BattleManager : MonoBehaviour
     private GameObject mgm;
     private float battleTime;
     private int battleStage;
+    private Enemy enemy;
 
     public void Start()
     {
         eventSystem = EventSystem.current;
         mgm = Instantiate(miniGameManager);
-        battleTime = 5f;
+        battleTime = 10f;
         battleStage = 1;
 
         // Добавление слушателей на кнопки
@@ -71,6 +72,7 @@ public class BattleManager : MonoBehaviour
         public ArrowAttack arrowAttack = new ArrowAttack();
         public SpellAttack spellAttack = new SpellAttack();
         public int health;
+        public int armor;
 
         public Enemy()
         {
@@ -87,6 +89,7 @@ public class BattleManager : MonoBehaviour
             spellAttack.frequency = 0;
 
             health = 0;
+            armor = 0;
         }
     }
 
@@ -116,18 +119,22 @@ public class BattleManager : MonoBehaviour
     {
         // Генерация типа противника по характеристикам
         int n = Random.Range(0, 2);
+        enemy = new Enemy();
         switch (n)
         {
             case 0:
-                Debug.Log("Enemy1");
+                enemy.health = 10;
+                enemy.armor = 5;
                 break;
 
             case 1:
-                Debug.Log("Enemy2");
+                enemy.health = 15;
+                enemy.armor = 10;
                 break;
 
             default:
-                Debug.Log("Enemy");
+                enemy.health = 20;
+                enemy.armor = 15;
                 break;
         }
     }
@@ -135,9 +142,9 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "ATTACK"
     private void AttackButtonAct()
     {
-        mgm.GetComponent<Attack>().AttackInit(battleTime);
+        mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), enemy.health, enemy.armor);
         battleBackground.SetActive(false);
-        StartCoroutine("CheckEnd");
+        StartCoroutine("CheckEndMinigame");
     }
 
     // Действие при нажатие кнопки "DEFENSE"
@@ -155,23 +162,17 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "LEAVE"
     private void LeaveButtonAct()
     {
-        // Убираем меню битвы
-        battleBackground.SetActive(false);
-
-        // Убираем вторую камеру
-        miniGameCamera.SetActive(false);
-
-        // Передача управления игроку
-        player.SetActive(true);
+        ExitBattle();
     }
 
-    IEnumerator CheckEnd()
+    // Проверка окончания миниигры
+    IEnumerator CheckEndMinigame()
     {
         // Если сейчас этап атаки
         if (battleStage == 1)
         {
             yield return new WaitWhile(() => !mgm.GetComponent<Attack>().IsEnd());
-            Debug.Log(mgm.GetComponent<Attack>().GetFactor());
+            enemy.health = mgm.GetComponent<Attack>().GetEnemyHealth();
         }
 
         // Если сейчас этап защиты
@@ -181,5 +182,28 @@ public class BattleManager : MonoBehaviour
         }
 
         WindowInit();
+        CheckEndBattle();
+    }
+
+    // Проверка окончания битвы
+    private void CheckEndBattle()
+    {
+        if (enemy.health <= 0)
+        {
+            ExitBattle();
+        }
+    }
+
+    // Закрытие окна битвы
+    private void ExitBattle()
+    {
+        // Убираем меню битвы
+        battleBackground.SetActive(false);
+
+        // Убираем вторую камеру
+        miniGameCamera.SetActive(false);
+
+        // Передача управления игроку
+        player.SetActive(true);
     }
 }
