@@ -34,8 +34,10 @@ public class Armor : MonoBehaviour
     // Появление защиты
     private void Spawn()
     {
-        // Случайный угол в радианах
+        // Случайный угол
         angle = Random.Range(0, 360);
+
+        // Случайный угол в радианах
         radian = angle * Mathf.PI / 180f;
 
         // Определение радиуса окружности, по которой движется защита
@@ -59,6 +61,9 @@ public class Armor : MonoBehaviour
                 direction = 1f;
                 break;
         }
+
+        // Определение скорости движения защиты
+        speed = Random.Range(1, 4);
 
         float _x = radius * Mathf.Cos(radian);
         float _y = radius * Mathf.Sin(radian);

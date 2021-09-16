@@ -4,23 +4,33 @@ using System;
 
 public class Attack : MonoBehaviour
 {
-    [SerializeField] private GameObject aimPref;
+    [SerializeField] private GameObject aimMainPref;
+    [SerializeField] private GameObject aimFakePref;
     [SerializeField] private GameObject targetPref;
     [SerializeField] private GameObject attackBackgroundPref;
     [SerializeField] private GameObject armorPref;
     private GameObject storage;
     private GameObject aim;
+    private int[] sectors;
     private float attackTime;
     private int playerDamage;
     private int enemyHealth;
-    private int enemyArmor;
+    private int nArmor;
+    private int nFakeAim;
 
-    public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, int _enemyArmor)
+    public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, int _nArmor, int _nFakeAim)
     {
+        sectors = new int[36];
+        for (int i = 0; i < 36; i++)
+        {
+            sectors[i] = 0;
+        }
+
         attackTime = _attackTime;
         playerDamage = _playerDamage;
         enemyHealth = _enemyHealth;
-        enemyArmor = _enemyArmor;
+        nArmor = _nArmor;
+        nFakeAim = _nFakeAim;
 
         // Хранилище для объектов сцены
         storage = new GameObject("Storage");
@@ -29,16 +39,27 @@ public class Attack : MonoBehaviour
         Instantiate(attackBackgroundPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
 
         // Создание прицела
-        int _angle = UnityEngine.Random.Range(0, 360);
-        float _aimX = 4f * Mathf.Cos(_angle);
-        float _aimY = 4f * Mathf.Sin(_angle);
-        aim = Instantiate(aimPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity);
+        int _angle;
+
+        // Генерация уникальной позиции
+        do
+        {
+            _angle = UnityEngine.Random.Range(0, 360);
+        } while (!TakeSector(_angle));
+
+        float _radian = _angle * Mathf.PI / 180f;
+        float _aimX = 4f * Mathf.Cos(_radian);
+        float _aimY = 4f * Mathf.Sin(_radian);
+        aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity);
 
         // Создание цели
         Instantiate(targetPref, new Vector3(0, 0, -1.1f), Quaternion.identity, storage.transform);
 
         // Создание защиты противника
-        GenArmor(enemyArmor);
+        GenArmor(nArmor);
+
+        // Создание поддельных прицелов
+        GenFakeAim(nFakeAim);
         
         StartCoroutine("AttackTimer");
         StartCoroutine("CheckShoot");
@@ -119,7 +140,56 @@ public class Attack : MonoBehaviour
         {
             Instantiate(armorPref, new Vector3(0f, 0f, -1.2f), Quaternion.identity, storage.transform);
         }
+    }
 
-        
+    // Генерация поддельных прицелов
+    private void GenFakeAim(int _num)
+    {
+        int _angle;
+        float _radian, _x, _y;
+
+        // Ограничение количества поддельных прицелов 
+        if (_num > 11)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _num; i++)
+        {
+            // Генерация уникальной позиции
+            do
+            {
+                _angle = UnityEngine.Random.Range(0, 360);
+            } while (!TakeSector(_angle));
+            
+            _radian = _angle * Mathf.PI / 180f;
+            _x = 4f * Mathf.Cos(_radian);
+            _y = 4f * Mathf.Sin(_radian);
+            Instantiate(aimFakePref, new Vector3(_x, _y, -1.2f), Quaternion.identity, storage.transform);
+        }
+    }
+
+    // Занимаем сектор для уникального местоположения прицелов
+    private bool TakeSector(int _angle)
+    {
+        int _curSector = (int)Mathf.Floor(_angle / 10f);
+        int _prevSector = (35 - _curSector) % 36;
+        int _nextSector = (37 - _curSector) % 36;
+
+        // Если сектор не занят
+        if ( (sectors[_prevSector] == 0) && (sectors[_curSector] == 0) && (sectors[_nextSector] == 0) )
+        {
+            sectors[_prevSector] = 1;
+            sectors[_curSector] = 1;
+            sectors[_nextSector] = 1;
+
+            return true;
+        }
+
+        // Если сектор занят
+        else
+        {
+            return false;
+        }
     }
 }

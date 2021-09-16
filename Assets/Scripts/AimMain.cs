@@ -6,6 +6,7 @@ public class AimMain : Aim
 {
     private float speed = 5f;
     private bool canShoot = true;
+    private bool canDestroy = true;
 
     private void FixedUpdate()
     {
@@ -27,15 +28,21 @@ public class AimMain : Aim
     protected override void Respawn()
     {
         int _angle = Random.Range(0, 360);
-        float _x = 4f * Mathf.Cos(_angle);
-        float _y = 4f * Mathf.Sin(_angle);
+        float _radian = _angle * Mathf.PI / 180f;
+        
+        float _x = 4f * Mathf.Cos(_radian);
+        float _y = 4f * Mathf.Sin(_radian);
 
         transform.position = new Vector3(_x, _y, transform.position.z);
+
+        // Разрешаем удалять защиту
+        canDestroy = true;
     }
 
     // Проверка прохода через границу
     protected override void BorderCrossing()
     {
+        // Границы условного поля
         if ((Mathf.Abs(transform.position.y) > 5) || (Mathf.Abs(transform.position.x) > 10))
         {
             Respawn();
@@ -72,12 +79,30 @@ public class AimMain : Aim
             canShoot = false;
         }
 
-        // Проверка отжатия клавиши, чтобы избежать лишних исполнений кода
+        // Проверка отжатия клавиши, чтобы избежать лишних нажатий
         if (Input.GetAxis("Fire1") == 0)
         {
             canShoot = true;
         }
 
         return _points;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Если соприкоснулся с защитой
+        if (collision.tag == "Armor")
+        {
+            Respawn();
+            
+            // Удаление единицы защиты
+            if ( (collision.gameObject != null) & (canDestroy) )
+            {
+                Destroy(collision.gameObject);
+
+                // Запрещаем удалять защиту
+                canDestroy = false;
+            }
+        }
     }
 }

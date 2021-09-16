@@ -35,6 +35,7 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        // Проверка пройденного расстояния
         if (player.GetComponent<Player>().GetDistance() >= 200f)
         {
             player.GetComponent<Player>().ZeroDistance();
@@ -72,7 +73,8 @@ public class BattleManager : MonoBehaviour
         public ArrowAttack arrowAttack = new ArrowAttack();
         public SpellAttack spellAttack = new SpellAttack();
         public int health;
-        public int armor;
+        public int nArmor;
+        public int nFalseAim;
 
         public Enemy()
         {
@@ -89,7 +91,8 @@ public class BattleManager : MonoBehaviour
             spellAttack.frequency = 0;
 
             health = 0;
-            armor = 0;
+            nArmor = 0;
+            nFalseAim = 0;
         }
     }
 
@@ -124,17 +127,20 @@ public class BattleManager : MonoBehaviour
         {
             case 0:
                 enemy.health = 10;
-                enemy.armor = 5;
+                enemy.nArmor = 5;
+                enemy.nFalseAim = 1;
                 break;
 
             case 1:
                 enemy.health = 15;
-                enemy.armor = 10;
+                enemy.nArmor = 10;
+                enemy.nFalseAim = 2;
                 break;
 
             default:
                 enemy.health = 20;
-                enemy.armor = 15;
+                enemy.nArmor = 15;
+                enemy.nFalseAim = 1;
                 break;
         }
     }
@@ -142,7 +148,10 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "ATTACK"
     private void AttackButtonAct()
     {
-        mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), enemy.health, enemy.armor);
+        // Инициализация миниигры атака
+        mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), 
+            enemy.health, enemy.nArmor, enemy.nFalseAim);
+
         battleBackground.SetActive(false);
         StartCoroutine("CheckEndMinigame");
     }
