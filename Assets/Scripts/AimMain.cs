@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class AimMain : Aim
 {
+    // Скорость прицела
     private float speed = 5f;
+
+    // Возможность выстрела
     private bool canShoot = true;
-    private bool canDestroy = true;
 
     private void FixedUpdate()
     {
@@ -17,8 +19,8 @@ public class AimMain : Aim
     // Движение правильного прицела
     protected override void Movement()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Input.GetAxisRaw("Horizontal");
+        float moveVertical = Input.GetAxisRaw("Vertical");
 
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
         transform.Translate(movement * speed * Time.fixedDeltaTime);
@@ -34,9 +36,6 @@ public class AimMain : Aim
         float _y = 4f * Mathf.Sin(_radian);
 
         transform.position = new Vector3(_x, _y, transform.position.z);
-
-        // Разрешаем удалять защиту
-        canDestroy = true;
     }
 
     // Проверка прохода через границу
@@ -93,16 +92,19 @@ public class AimMain : Aim
         // Если соприкоснулся с защитой
         if (collision.tag == "Armor")
         {
-            Respawn();
-            
             // Удаление единицы защиты
-            if ( (collision.gameObject != null) & (canDestroy) )
+            if (collision.gameObject != null)
             {
                 Destroy(collision.gameObject);
-
-                // Запрещаем удалять защиту
-                canDestroy = false;
             }
+
+            Respawn();
         }
+    }
+
+    // Устанавливаем инверсивное движение прицела
+    public void SetInverseMove()
+    {
+        speed = -speed;
     }
 }

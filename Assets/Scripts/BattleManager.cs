@@ -6,7 +6,7 @@ using System.Collections;
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject battleBackground;
+    [SerializeField] private GameObject battleBG;
     [SerializeField] private Button attackButton;
     [SerializeField] private Button defenseButton;
     [SerializeField] private Button itemsButton;
@@ -75,6 +75,7 @@ public class BattleManager : MonoBehaviour
         public int health;
         public int nArmor;
         public int nFalseAim;
+        public bool inverseMove;
 
         public Enemy()
         {
@@ -93,6 +94,7 @@ public class BattleManager : MonoBehaviour
             health = 0;
             nArmor = 0;
             nFalseAim = 0;
+            inverseMove = false;
         }
     }
 
@@ -110,7 +112,7 @@ public class BattleManager : MonoBehaviour
     public void WindowInit()
     {
         // Появление экрана битвы
-        battleBackground.SetActive(true);
+        battleBG.SetActive(true);
 
         // Подсветка первой кнопки в меню
         eventSystem.SetSelectedGameObject(null);
@@ -128,19 +130,21 @@ public class BattleManager : MonoBehaviour
             case 0:
                 enemy.health = 10;
                 enemy.nArmor = 5;
-                enemy.nFalseAim = 1;
+                enemy.nFalseAim = 2;
+                //enemy.inverseMove = true;
                 break;
 
             case 1:
                 enemy.health = 15;
                 enemy.nArmor = 10;
-                enemy.nFalseAim = 2;
+                enemy.nFalseAim = 3;
+                //enemy.inverseMove = true;
                 break;
 
             default:
                 enemy.health = 20;
                 enemy.nArmor = 15;
-                enemy.nFalseAim = 1;
+                enemy.nFalseAim = 4;
                 break;
         }
     }
@@ -150,16 +154,19 @@ public class BattleManager : MonoBehaviour
     {
         // Инициализация миниигры атака
         mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), 
-            enemy.health, enemy.nArmor, enemy.nFalseAim);
+            enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove);
 
-        battleBackground.SetActive(false);
+        battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");
     }
 
     // Действие при нажатие кнопки "DEFENSE"
     private void DefenseButtonAct()
     {
-        Debug.Log("Defense");
+        // Инициализация миниигры защита
+        mgm.GetComponent<Defense>().DefenceInit();
+
+        battleBG.SetActive(false);
     }
 
     // Действие при нажатие кнопки "ITEMS"
@@ -207,7 +214,7 @@ public class BattleManager : MonoBehaviour
     private void ExitBattle()
     {
         // Убираем меню битвы
-        battleBackground.SetActive(false);
+        battleBG.SetActive(false);
 
         // Убираем вторую камеру
         miniGameCamera.SetActive(false);

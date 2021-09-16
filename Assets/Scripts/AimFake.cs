@@ -2,31 +2,56 @@ using UnityEngine;
 
 public class AimFake : Aim
 {
+    // Скорость прицела
     private float speed = 5f;
+
+    // Возможность выстрела
     private bool canShoot = true;
 
-    private string upKey;
-    private string downKey;
-    private string leftKey;
-    private string rightKey;
+    // Ключи основных клавиш
+    private string upKey = "";
+    private string downKey = "";
+    private string leftKey = "";
+    private string rightKey = "";
+
+    // Ключи альтернативных клавиш
+    private string upKeyAlt = "";
+    private string downKeyAlt = "";
+    private string leftKeyAlt = "";
+    private string rightKeyAlt = "";
 
     private void Start()
     {
-        // Случайная клавиша для движения вверх
-        string[] _up = { "s", "a", "d" };
-        upKey = _up[Random.Range(0, _up.Length)];
+        string[] _keys = { "w", "s", "a", "d" };
+        string[] _keysAlt = { "up", "down", "left", "right" };
 
-        // Случайная клавиша для движения вниз
-        string[] _down = { "w", "a", "d" };
-        downKey = _down[Random.Range(0, _down.Length)];
+        // Перемешиваем массив с ключами клавиш
+        for (int i = 0; i < 3; i++)
+        {
+            int k = Random.Range(i + 1, 4);
 
-        // Случайная клавиша для движения влево
-        string[] _left = { "w", "s", "d" };
-        leftKey = _left[Random.Range(0, _left.Length)];
+            // Массив ключей основных клавиш
+            string _tmp = _keys[k];
+            _keys[k] = _keys[i];
+            _keys[i] = _tmp;
 
-        // Случайная клавиша для движения вправо
-        string[] _right = { "w", "s", "a" };
-        rightKey = _right[Random.Range(0, _right.Length)];
+            // Массив ключей альтернативных клавиш
+            _tmp = _keysAlt[k];
+            _keysAlt[k] = _keysAlt[i];
+            _keysAlt[i] = _tmp;
+        }
+
+        // Устанавливаем ключи основных клавиш
+        upKey = _keys[0];
+        downKey = _keys[1];
+        leftKey = _keys[2];
+        rightKey = _keys[3];
+
+        // Устанавливаем ключи альтернативных клавиш
+        upKeyAlt = _keysAlt[0];
+        downKeyAlt = _keysAlt[1];
+        leftKeyAlt = _keysAlt[2];
+        rightKeyAlt = _keysAlt[3];
     }
 
     private void FixedUpdate()
@@ -39,20 +64,35 @@ public class AimFake : Aim
     // Движение поддельного прицела
     protected override void Movement()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-        Debug.Log(moveHorizontal + " " + moveVertical);
-        
+        float _x = 0f;
+        float _y = 0f;
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-        transform.Translate(movement * speed * Time.fixedDeltaTime);
-
-        /*float _x, _y;
-
-        if (Input.GetKeyDown(upKey))
+        // Движение вверх
+        if ( Input.GetKey(upKey) || Input.GetKey(upKeyAlt) )
         {
+            _y += 1f;
+        }
 
-        }*/
+        // Движение вниз
+        if ( Input.GetKey(downKey) || Input.GetKey(downKeyAlt) )
+        {
+            _y += -1f;
+        }
+
+        // Движение влево
+        if ( Input.GetKey(leftKey) || Input.GetKey(leftKeyAlt) )
+        {
+            _x += -1f;
+        }
+
+        // Движение вправо
+        if ( Input.GetKey(rightKey) || Input.GetKey(rightKeyAlt) )
+        {
+            _x += 1f;
+        }
+
+        Vector2 movement = new Vector2(_x, _y);
+        transform.Translate(movement * speed * Time.fixedDeltaTime);
     }
 
     // Появление прицела в исходной области
@@ -60,6 +100,7 @@ public class AimFake : Aim
     {
         int _angle = Random.Range(0, 360);
         float _radian = _angle * Mathf.PI / 180f;
+
         float _x = 4f * Mathf.Cos(_radian);
         float _y = 4f * Mathf.Sin(_radian);
 

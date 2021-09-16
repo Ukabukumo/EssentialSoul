@@ -7,7 +7,7 @@ public class Attack : MonoBehaviour
     [SerializeField] private GameObject aimMainPref;
     [SerializeField] private GameObject aimFakePref;
     [SerializeField] private GameObject targetPref;
-    [SerializeField] private GameObject attackBackgroundPref;
+    [SerializeField] private GameObject attackBGPref;
     [SerializeField] private GameObject armorPref;
     private GameObject storage;
     private GameObject aim;
@@ -17,9 +17,13 @@ public class Attack : MonoBehaviour
     private int enemyHealth;
     private int nArmor;
     private int nFakeAim;
+    private bool inverseMove;
 
-    public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, int _nArmor, int _nFakeAim)
+    // Инициализация миниигры атака
+    public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, 
+        int _nArmor, int _nFakeAim, bool _inverseMove)
     {
+        // Условные сектора окружности для размещения прицелов
         sectors = new int[36];
         for (int i = 0; i < 36; i++)
         {
@@ -31,12 +35,13 @@ public class Attack : MonoBehaviour
         enemyHealth = _enemyHealth;
         nArmor = _nArmor;
         nFakeAim = _nFakeAim;
+        inverseMove = _inverseMove;
 
         // Хранилище для объектов сцены
         storage = new GameObject("Storage");
 
         // Создание фона
-        Instantiate(attackBackgroundPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
+        Instantiate(attackBGPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
 
         // Создание прицела
         int _angle;
@@ -60,6 +65,12 @@ public class Attack : MonoBehaviour
 
         // Создание поддельных прицелов
         GenFakeAim(nFakeAim);
+
+        // Установка инверсивного движения
+        if (inverseMove)
+        {
+            aim.GetComponent<AimMain>().SetInverseMove();
+        }
         
         StartCoroutine("AttackTimer");
         StartCoroutine("CheckShoot");
@@ -179,9 +190,7 @@ public class Attack : MonoBehaviour
         // Если сектор не занят
         if ( (sectors[_prevSector] == 0) && (sectors[_curSector] == 0) && (sectors[_nextSector] == 0) )
         {
-            sectors[_prevSector] = 1;
             sectors[_curSector] = 1;
-            sectors[_nextSector] = 1;
 
             return true;
         }
