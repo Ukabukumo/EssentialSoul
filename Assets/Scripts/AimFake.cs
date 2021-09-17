@@ -2,11 +2,8 @@ using UnityEngine;
 
 public class AimFake : Aim
 {
-    // Скорость прицела
-    private float speed = 5f;
-
-    // Возможность выстрела
-    private bool canShoot = true;
+    private float speed = 5f;       // Скорость прицела
+    private bool canShoot = true;   // Возможность выстрела
 
     // Ключи основных клавиш
     private string upKey = "";

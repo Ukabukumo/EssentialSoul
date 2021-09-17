@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     private float distance = 0f;
+    private int health = 5;
     private int damage = 1;
 
     private void FixedUpdate()
@@ -26,7 +27,7 @@ public class Player : MonoBehaviour
         distance += (float)Math.Round(movement.sqrMagnitude, 3);
     }
 
-    // Проверка перехода через границу локации
+    // Проверка пересечения границы локации
     private void BorderCrossing()
     {
         float _x = transform.position.x;
@@ -74,5 +75,11 @@ public class Player : MonoBehaviour
     public int GetDamage()
     {
         return damage;
+    }
+
+    // Получение здоровья игрока
+    public int GetHealth()
+    {
+        return health;
     }
 }

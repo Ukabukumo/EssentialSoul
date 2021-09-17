@@ -55,7 +55,7 @@ public class Attack : MonoBehaviour
         float _radian = _angle * Mathf.PI / 180f;
         float _aimX = 4f * Mathf.Cos(_radian);
         float _aimY = 4f * Mathf.Sin(_radian);
-        aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity);
+        aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity, storage.transform);
 
         // Создание цели
         Instantiate(targetPref, new Vector3(0, 0, -1.1f), Quaternion.identity, storage.transform);
@@ -77,7 +77,7 @@ public class Attack : MonoBehaviour
     }
 
     // Таймер атаки
-    IEnumerator AttackTimer()
+    private IEnumerator AttackTimer()
     {
         while (!IsEnd())
         {
@@ -97,10 +97,10 @@ public class Attack : MonoBehaviour
             Destroy(storage);
         }
 
-        if (aim != null)
+        /*if (aim != null)
         {
             Destroy(aim);
-        }
+        }*/
     }
 
     // Проверка окончания миниигры
@@ -119,7 +119,7 @@ public class Attack : MonoBehaviour
     }
 
     // Проверка выстрела
-    IEnumerator CheckShoot()
+    private IEnumerator CheckShoot()
     {
         while (!IsEnd())
         {

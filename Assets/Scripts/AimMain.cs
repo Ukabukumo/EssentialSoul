@@ -1,14 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AimMain : Aim
 {
-    // Скорость прицела
-    private float speed = 5f;
-
-    // Возможность выстрела
-    private bool canShoot = true;
+    private float speed = 5f;       // Скорость прицела
+    private bool canShoot = true;   // Возможность выстрела
 
     private void FixedUpdate()
     {
@@ -19,11 +14,11 @@ public class AimMain : Aim
     // Движение правильного прицела
     protected override void Movement()
     {
-        float moveHorizontal = Input.GetAxisRaw("Horizontal");
-        float moveVertical = Input.GetAxisRaw("Vertical");
+        float _moveHorizontal = Input.GetAxisRaw("Horizontal");
+        float _moveVertical = Input.GetAxisRaw("Vertical");
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-        transform.Translate(movement * speed * Time.fixedDeltaTime);
+        Vector2 _movement = new Vector2(_moveHorizontal, _moveVertical);
+        transform.Translate(_movement * speed * Time.fixedDeltaTime);
     }
 
     // Появление прицела в исходной области
@@ -38,10 +33,10 @@ public class AimMain : Aim
         transform.position = new Vector3(_x, _y, transform.position.z);
     }
 
-    // Проверка прохода через границу
+    // Проверка пересечения границы игрового поля
     protected override void BorderCrossing()
     {
-        // Границы условного поля
+        // Границы игрового поля
         if ((Mathf.Abs(transform.position.y) > 5) || (Mathf.Abs(transform.position.x) > 10))
         {
             Respawn();

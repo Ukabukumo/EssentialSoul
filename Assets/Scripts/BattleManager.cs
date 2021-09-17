@@ -18,13 +18,14 @@ public class BattleManager : MonoBehaviour
     private float battleTime;
     private int battleStage;
     private Enemy enemy;
+    private int playerHealth;
 
     public void Start()
     {
         eventSystem = EventSystem.current;
         mgm = Instantiate(miniGameManager);
         battleTime = 10f;
-        battleStage = 1;
+        battleStage = 2;
 
         // Добавление слушателей на кнопки
         attackButton.onClick.AddListener(AttackButtonAct);
@@ -43,63 +44,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private class Enemy
-    {
-        // Характеристики атаки мечом
-        public struct SwordAttack
-        {
-            public int power;       // Сила
-            public int speed;       // Скорость
-            public int frequency;   // Частота появления
-        }
-
-        // Характеристики атаки стрелами
-        public struct ArrowAttack
-        {
-            public int power;       // Сила
-            public int speed;       // Скорость
-            public int frequency;   // Частота появления
-        }
-
-        // Характеристики атаки заклинаниями
-        public struct SpellAttack
-        {
-            public int power;       // Сила
-            public int speed;       // Скорость
-            public int frequency;   // Частота появления
-        }
-
-        public SwordAttack swordAttack = new SwordAttack();
-        public ArrowAttack arrowAttack = new ArrowAttack();
-        public SpellAttack spellAttack = new SpellAttack();
-        public int health;
-        public int nArmor;
-        public int nFalseAim;
-        public bool inverseMove;
-
-        public Enemy()
-        {
-            swordAttack.power = 0;
-            swordAttack.speed = 0;
-            swordAttack.frequency = 0;
-
-            arrowAttack.power = 0;
-            arrowAttack.speed = 0;
-            arrowAttack.frequency = 0;
-
-            spellAttack.power = 0;
-            spellAttack.speed = 0;
-            spellAttack.frequency = 0;
-
-            health = 0;
-            nArmor = 0;
-            nFalseAim = 0;
-            inverseMove = false;
-        }
-    }
-
     public void BattleInit()
     {
+        // Получение здоровья игрока
+        playerHealth = player.GetComponent<Player>().GetHealth();
+
         // Остановка игрока
         player.SetActive(false);
         miniGameCamera.SetActive(true);
@@ -123,12 +72,18 @@ public class BattleManager : MonoBehaviour
     private void CreateEnemy()
     {
         // Генерация типа противника по характеристикам
-        int n = Random.Range(0, 2);
+        int n = Random.Range(0, 1);
         enemy = new Enemy();
         switch (n)
         {
             case 0:
                 enemy.health = 10;
+
+                enemy.arrowAttack.active = true;
+                enemy.arrowAttack.power = 1;
+                enemy.arrowAttack.speed = 5f;
+                enemy.arrowAttack.frequency = 0.5f;
+
                 enemy.nArmor = 5;
                 enemy.nFalseAim = 2;
                 //enemy.inverseMove = true;
@@ -164,9 +119,10 @@ public class BattleManager : MonoBehaviour
     private void DefenseButtonAct()
     {
         // Инициализация миниигры защита
-        mgm.GetComponent<Defense>().DefenceInit();
+        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy);
 
         battleBG.SetActive(false);
+        StartCoroutine("CheckEndMinigame");
     }
 
     // Действие при нажатие кнопки "ITEMS"
@@ -194,7 +150,8 @@ public class BattleManager : MonoBehaviour
         // Если сейчас этап защиты
         else if (battleStage == 2)
         {
-            yield return new WaitWhile(() => !mgm.GetComponent<Attack>().IsEnd());
+            yield return new WaitWhile(() => !mgm.GetComponent<Defense>().IsEnd());
+            playerHealth = mgm.GetComponent<Defense>().GetPlayerHealth();
         }
 
         WindowInit();
@@ -204,7 +161,7 @@ public class BattleManager : MonoBehaviour
     // Проверка окончания битвы
     private void CheckEndBattle()
     {
-        if (enemy.health <= 0)
+        if (enemy.health <= 0 || playerHealth <= 0)
         {
             ExitBattle();
         }
