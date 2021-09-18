@@ -5,6 +5,7 @@ public class Defense : MonoBehaviour
 {
     [SerializeField] private GameObject defenseBGPref;
     [SerializeField] private GameObject miniPlayerPref;
+    [SerializeField] private GameObject swordPref;
     [SerializeField] private GameObject arrowPref;
     private GameObject storage;
     private GameObject miniPlayer;
@@ -27,9 +28,17 @@ public class Defense : MonoBehaviour
 
         // Создание игрока в миниигре
         miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -1.1f), Quaternion.identity, storage.transform);
+        miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(playerHealth, enemy);
 
         StartCoroutine("DefenseTimer");
 
+        // Запуск генерации меча
+        if (enemy.swordAttack.active)
+        {
+            StartCoroutine("SpawnSword", enemy.swordAttack.frequency);
+        }
+
+        // Запуск генерации стрел
         if (enemy.arrowAttack.active)
         {
             StartCoroutine("SpawnArrow", enemy.arrowAttack.frequency);
@@ -43,17 +52,29 @@ public class Defense : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
             defenseTime -= Time.fixedDeltaTime;
+            playerHealth = miniPlayer.GetComponent<MiniPlayer>().GetHealth();
             //Debug.Log(defenseTime);
         }
 
         ClearScene();
     }
 
+    // Создание стрел с заданной частотой
     private IEnumerator SpawnArrow(float _frequency)
     {
         while (!IsEnd())
         {
             GenArrow();
+            yield return new WaitForSeconds(_frequency);
+        }
+    }
+
+    // Создание меча с заданной частотой
+    private IEnumerator SpawnSword(float _frequency)
+    {
+        while (!IsEnd())
+        {
+            GenSword();
             yield return new WaitForSeconds(_frequency);
         }
     }
@@ -77,6 +98,58 @@ public class Defense : MonoBehaviour
     public int GetPlayerHealth()
     {
         return playerHealth;
+    }
+
+    // Генерация меча
+    private void GenSword()
+    {
+        Vector3 _position;
+        Quaternion _rotation;
+        Vector3 _playerPos = miniPlayer.transform.position;
+        float _startPos = 1f;
+
+        // Сторона появления
+        int _side = Random.Range(0, 4);
+
+        // Направление вращения (0 - против часовой / 1 - по часовой)
+        int _direction = Random.Range(0, 2);
+
+        // Определение стартовой позиции
+        switch (_side)
+        {
+            // Сверху
+            case 0:
+                _position = new Vector3(_playerPos.x, _playerPos.y + _startPos, _playerPos.z);
+                _rotation = Quaternion.Euler(0f, 180f * _direction, 90f);
+                break;
+
+            // Снизу
+            case 1:
+                _position = new Vector3(_playerPos.x, _playerPos.y - _startPos, _playerPos.z);
+                _rotation = Quaternion.Euler(0f, 180f * _direction, 270f);
+                break;
+
+            // Слева
+            case 2:
+                _position = new Vector3(_playerPos.x - _startPos, _playerPos.y, _playerPos.z);
+                _rotation = Quaternion.Euler(180f * _direction, 0f, 180f);
+                break;
+
+            // Справа
+            case 3:
+                _position = new Vector3(_playerPos.x + _startPos, _playerPos.y, _playerPos.z);
+                _rotation = Quaternion.Euler(180f * _direction, 0f, 0f);
+                break;
+
+            // По-умолчанию (Снизу)
+            default:
+                _position = new Vector3(_playerPos.x, -_startPos, _playerPos.z);
+                _rotation = Quaternion.Euler(0f, 180f * _direction, 270f);
+                break;
+        }
+
+        GameObject _sword = Instantiate(swordPref, _position, _rotation, storage.transform);
+        _sword.GetComponent<Sword>().SwordInit(enemy.swordAttack.speed);
     }
 
     // Генерация стрелы
@@ -116,7 +189,7 @@ public class Defense : MonoBehaviour
                 _rotation = Quaternion.Euler(0f, 0f, 180f);
                 break;
 
-            // По-умолчанию
+            // По-умолчанию (Слева)
             default:
                 _position = new Vector3(-_borderPos, _playerPos.y + _offset, _playerPos.z);
                 _rotation = Quaternion.Euler(0f, 0f, 0f);

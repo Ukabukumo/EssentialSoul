@@ -63,4 +63,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defenseBGPref: {fileID: 6340122387824003400, guid: 35597fe460e2af74ba6979b87476f1a4, type: 3}
   miniPlayerPref: {fileID: 3901296023502685786, guid: 36e5caba4e567ca4c8196b31eaca4a0b, type: 3}
+  swordPref: {fileID: 8343203560788140965, guid: 66a6ff5ab1b8267408b6ddba571c3988, type: 3}
   arrowPref: {fileID: 794809187958589296, guid: 7b4d3c4e72e3d734ebe9087dcecc8c84, type: 3}

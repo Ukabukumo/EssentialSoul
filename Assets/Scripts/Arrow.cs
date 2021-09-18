@@ -20,8 +20,10 @@ public class Arrow : MonoBehaviour
         transform.Translate(_movement * Time.fixedDeltaTime);
     }
 
+    // Действия стрелы
     private IEnumerator Act()
     {
+        // Пока не пересечена граница игрового поля
         while (!IsBorder())
         {
             yield return new WaitForFixedUpdate();
@@ -30,7 +32,7 @@ public class Arrow : MonoBehaviour
         }
 
         // Исчезновение стрелы
-        GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
+        gameObject.SetActive(false);
     }
 
     // Проверка пересечения границы

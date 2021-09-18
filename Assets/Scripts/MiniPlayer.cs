@@ -1,15 +1,45 @@
 using UnityEngine;
+using System.Collections;
 
 public class MiniPlayer : MonoBehaviour
 {
-    private float speed = 5f;   // Скорость игрока в миниигре
+    private int health;         // Здоровье игрока
+    private float speed = 5f;   // Скорость игрока
+    private float cooldown;     // Время неуязвимости после получения урона
+    private Enemy enemy;        // Характеристики противника
+    private bool attackable;    // Флаг уязвимости игрока
 
-    private void FixedUpdate()
+    // Инициализация игрока
+    public void MiniPlayerInit(int _health, Enemy _enemy)
     {
-        Movement();
+        health = _health;
+        enemy = _enemy;
+
+        attackable = true;
+        cooldown = 1f;
+
+        StartCoroutine("Act");
     }
 
-    // Передвижение игрока в миниигре
+    // Действия игрока
+    private IEnumerator Act()
+    {
+        while (true)
+        {
+            yield return new WaitForFixedUpdate();
+
+            Movement();
+        }
+    }
+
+    // Неуязвимость игрока
+    private IEnumerator DamageCooldown()
+    {
+        yield return new WaitForSeconds(cooldown);
+        attackable = true;
+    }
+
+    // Передвижение игрока
     private void Movement()
     {
         // Позиция перед началом движения
@@ -62,5 +92,39 @@ public class MiniPlayer : MonoBehaviour
         {
             return false;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D _other)
+    {
+        // Если столкнулся со стрелой
+        if ( (_other.tag == "Arrow") && attackable )
+        {
+            if (_other.gameObject != null)
+            {
+                Destroy(_other.gameObject);
+            }
+
+            health -= enemy.arrowAttack.power;
+        }
+
+        // Если столкнулся с мечом
+        if ( (_other.tag == "Sword") && attackable )
+        {
+            if (_other.gameObject != null)
+            {
+                Destroy(_other.gameObject);
+            }
+
+            health -= enemy.swordAttack.power;
+        }
+
+        attackable = false;
+        StartCoroutine("DamageCooldown");
+    }
+
+    // Получение здоровья игрока
+    public int GetHealth()
+    {
+        return health;
     }
 }
