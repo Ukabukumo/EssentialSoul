@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections;   
 
 public class Defense : MonoBehaviour
 {
@@ -7,6 +7,7 @@ public class Defense : MonoBehaviour
     [SerializeField] private GameObject miniPlayerPref;
     [SerializeField] private GameObject swordPref;
     [SerializeField] private GameObject arrowPref;
+    [SerializeField] private GameObject spellPref;
     private GameObject storage;
     private GameObject miniPlayer;
     private float defenseTime;
@@ -43,6 +44,11 @@ public class Defense : MonoBehaviour
         {
             StartCoroutine("SpawnArrow", enemy.arrowAttack.frequency);
         }
+
+        if (enemy.spellAttack.active)
+        {
+            StartCoroutine("SpawnSpell", enemy.spellAttack.frequency);
+        }
     }
 
     // Таймер защиты
@@ -65,6 +71,16 @@ public class Defense : MonoBehaviour
         while (!IsEnd())
         {
             GenArrow();
+            yield return new WaitForSeconds(_frequency);
+        }
+    }
+
+    // Создание заклинаний с заданной частотой
+    private IEnumerator SpawnSpell(float _frequency)
+    {
+        while (!IsEnd())
+        {
+            GenSpell();
             yield return new WaitForSeconds(_frequency);
         }
     }
@@ -198,6 +214,66 @@ public class Defense : MonoBehaviour
 
         GameObject _arrow = Instantiate(arrowPref, _position, _rotation, storage.transform);
         _arrow.GetComponent<Arrow>().ArrowInit(enemy.arrowAttack.speed);
+    }
+
+    // Генерация заклинания
+    private void GenSpell()
+    {
+        Vector3 _playerPos = miniPlayer.transform.position;
+        float _diff = 2f;
+        float _border = 4f;
+        float _upBorder, _downBorder, _leftBorder, _rightBorder;
+
+        // Сравнение расстояния до ВЕРХНЕЙ границы
+        if (_border - _playerPos.y >= _diff)
+        {
+            _upBorder = _diff;
+        }
+
+        else
+        {
+            _upBorder = _border - _playerPos.y;
+        }
+
+        // Сравнение расстояния до НИЖНЕЙ границы
+        if (-_border - _playerPos.y <= -_diff)
+        {
+            _downBorder = -_diff;
+        }
+
+        else
+        {
+            _downBorder = -_border - _playerPos.y; 
+        }
+
+        // Сравнение расстояния до ЛЕВОЙ границы
+        if (-_border - _playerPos.x <= -_diff)
+        {
+            _leftBorder = -_diff;
+        }
+
+        else
+        {
+            _leftBorder = -_border - _playerPos.x;
+        }
+
+        // Сравнение расстояния до ПРАВОЙ границы
+        if (_border -_playerPos.x >= _diff)
+        {
+            _rightBorder = _diff;
+        }
+
+        else
+        {
+            _rightBorder = _border - _playerPos.x;
+        }
+
+        // Генерация случайной позиции в заданном поле вокруг игрока
+        float _x = _playerPos.x + Random.Range(_leftBorder, _rightBorder);
+        float _y = _playerPos.y + Random.Range(_downBorder, _upBorder);
+        Vector3 _position = new Vector3(_x, _y, _playerPos.z);
+
+        GameObject _spell = Instantiate(spellPref, _position, Quaternion.identity, storage.transform);
     }
 
     // Очистка сцены

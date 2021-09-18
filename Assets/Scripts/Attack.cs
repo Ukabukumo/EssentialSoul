@@ -96,11 +96,6 @@ public class Attack : MonoBehaviour
         {
             Destroy(storage);
         }
-
-        /*if (aim != null)
-        {
-            Destroy(aim);
-        }*/
     }
 
     // Проверка окончания миниигры

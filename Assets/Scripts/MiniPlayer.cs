@@ -118,6 +118,17 @@ public class MiniPlayer : MonoBehaviour
             health -= enemy.swordAttack.power;
         }
 
+        // Если столкнулся с заклинанием
+        if ( (_other.tag == "Spell") && attackable )
+        {
+            if (_other.gameObject != null)
+            {
+                Destroy(_other.gameObject);
+            }
+
+            health -= enemy.spellAttack.power;
+        }
+
         attackable = false;
         StartCoroutine("DamageCooldown");
     }

@@ -8,6 +8,7 @@ TagManager:
   - Aim
   - Arrow
   - Sword
+  - Spell
   layers:
   - Default
   - TransparentFX

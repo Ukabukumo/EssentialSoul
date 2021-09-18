@@ -79,15 +79,19 @@ public class BattleManager : MonoBehaviour
             case 0:
                 enemy.health = 10;
 
-                enemy.swordAttack.active = true;
+                /*enemy.swordAttack.active = true;
                 enemy.swordAttack.power = 1;
                 enemy.swordAttack.speed = 2f;
-                enemy.swordAttack.frequency = 1f;
+                enemy.swordAttack.frequency = 1f;*/
 
                 /*enemy.arrowAttack.active = true;
                 enemy.arrowAttack.power = 1;
                 enemy.arrowAttack.speed = 5f;
                 enemy.arrowAttack.frequency = 0.5f;*/
+
+                enemy.spellAttack.active = true;
+                enemy.spellAttack.power = 1;
+                enemy.spellAttack.frequency = 0.5f;
 
                 enemy.nArmor = 5;
                 enemy.nFalseAim = 2;

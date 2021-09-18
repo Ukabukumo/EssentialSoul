@@ -65,3 +65,4 @@ MonoBehaviour:
   miniPlayerPref: {fileID: 3901296023502685786, guid: 36e5caba4e567ca4c8196b31eaca4a0b, type: 3}
   swordPref: {fileID: 8343203560788140965, guid: 66a6ff5ab1b8267408b6ddba571c3988, type: 3}
   arrowPref: {fileID: 794809187958589296, guid: 7b4d3c4e72e3d734ebe9087dcecc8c84, type: 3}
+  spellPref: {fileID: 4272154559928934598, guid: 6eae7d00efc27a04aaea4a23e199d2d2, type: 3}
