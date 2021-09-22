@@ -94,7 +94,7 @@ public class MiniPlayer : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D _other)
+    private void OnTriggerStay2D(Collider2D _other)
     {
         // Если столкнулся со стрелой
         if ( (_other.tag == "Arrow") && attackable )
@@ -105,6 +105,8 @@ public class MiniPlayer : MonoBehaviour
             }
 
             health -= enemy.arrowAttack.power;
+            attackable = false;
+            StartCoroutine("DamageCooldown");
         }
 
         // Если столкнулся с мечом
@@ -116,6 +118,8 @@ public class MiniPlayer : MonoBehaviour
             }
 
             health -= enemy.swordAttack.power;
+            attackable = false;
+            StartCoroutine("DamageCooldown");
         }
 
         // Если столкнулся с заклинанием
@@ -127,10 +131,11 @@ public class MiniPlayer : MonoBehaviour
             }
 
             health -= enemy.spellAttack.power;
-        }
 
-        attackable = false;
-        StartCoroutine("DamageCooldown");
+            Debug.Log(_other.name);
+            attackable = false;
+            StartCoroutine("DamageCooldown");
+        }
     }
 
     // Получение здоровья игрока

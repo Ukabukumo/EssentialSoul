@@ -15,17 +15,16 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject miniGameCamera;
     private EventSystem eventSystem;
     private GameObject mgm;
-    private float battleTime;
-    private int battleStage;
-    private Enemy enemy;
-    private int playerHealth;
+    private float battleTime;   // Время для текущего этапа
+    private int battleStage;    // Этап боя (1 - атака / 2 - защита)
+    private Enemy enemy;        // Характеристики противника
+    private int playerHealth;   // Здоровье игрока
 
-    public void Start()
+    private void Start()
     {
         eventSystem = EventSystem.current;
         mgm = Instantiate(miniGameManager);
         battleTime = 10f;
-        battleStage = 2;
 
         // Добавление слушателей на кнопки
         attackButton.onClick.AddListener(AttackButtonAct);
@@ -37,15 +36,19 @@ public class BattleManager : MonoBehaviour
     private void Update()
     {
         // Проверка пройденного расстояния
-        if (player.GetComponent<Player>().GetDistance() >= 200f)
+        if (player.GetComponent<Player>().GetDistance() >= 20000f)
         {
             player.GetComponent<Player>().ZeroDistance();
             BattleInit();
         }
     }
 
+    // Инициализация битвы
     public void BattleInit()
     {
+        // Установка текущего этапа боя
+        battleStage = 2;
+
         // Получение здоровья игрока
         playerHealth = player.GetComponent<Player>().GetHealth();
 
@@ -63,9 +66,29 @@ public class BattleManager : MonoBehaviour
         // Появление экрана битвы
         battleBG.SetActive(true);
 
-        // Подсветка первой кнопки в меню
-        eventSystem.SetSelectedGameObject(null);
-        eventSystem.SetSelectedGameObject(attackButton.gameObject);
+        // Если этап атаки
+        if (battleStage == 1)
+        {
+            // Меняем кнопку ЗАЩИТЫ на кнопку АТАКИ
+            attackButton.gameObject.SetActive(true);
+            defenseButton.gameObject.SetActive(false);
+
+            // Подсветка кнопки АТАКА в меню
+            eventSystem.SetSelectedGameObject(null);
+            eventSystem.SetSelectedGameObject(attackButton.gameObject);
+        }
+
+        // Если этап защиты
+        else if (battleStage == 2)
+        {
+            // Меняем кнопку АТАКИ на кнопку ЗАЩИТЫ
+            attackButton.gameObject.SetActive(false);
+            defenseButton.gameObject.SetActive(true);
+
+            // Подсветка кнопки ЗАЩИТА в меню
+            eventSystem.SetSelectedGameObject(null);
+            eventSystem.SetSelectedGameObject(defenseButton.gameObject);
+        }
     }
 
     // Создание противника
@@ -154,6 +177,8 @@ public class BattleManager : MonoBehaviour
         {
             yield return new WaitWhile(() => !mgm.GetComponent<Attack>().IsEnd());
             enemy.health = mgm.GetComponent<Attack>().GetEnemyHealth();
+
+            battleStage = 2;
         }
 
         // Если сейчас этап защиты
@@ -161,6 +186,8 @@ public class BattleManager : MonoBehaviour
         {
             yield return new WaitWhile(() => !mgm.GetComponent<Defense>().IsEnd());
             playerHealth = mgm.GetComponent<Defense>().GetPlayerHealth();
+
+            battleStage = 1;
         }
 
         WindowInit();
@@ -170,9 +197,17 @@ public class BattleManager : MonoBehaviour
     // Проверка окончания битвы
     private void CheckEndBattle()
     {
-        if (enemy.health <= 0 || playerHealth <= 0)
+        // Условие победы
+        if (enemy.health <= 0)
         {
             ExitBattle();
+        }
+
+        // Условие проигрыша
+        else if (playerHealth <= 0)
+        {
+            ExitBattle();
+            GetComponent<MainMenuManager>().MainMenuInit();
         }
     }
 

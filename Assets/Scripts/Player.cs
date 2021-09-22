@@ -4,9 +4,15 @@ using System;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
+    private Animator animator;
     private float distance = 0f;
     private int health = 5;
     private int damage = 1;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     private void FixedUpdate()
     {
@@ -17,11 +23,30 @@ public class Player : MonoBehaviour
     // Передвижение игрока
     private void Movement()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Input.GetAxisRaw("Horizontal");
+        float moveVertical = Input.GetAxisRaw("Vertical");
 
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
         transform.Translate(movement * speed * Time.fixedDeltaTime);
+
+        animator.SetFloat("Vertical", moveVertical);
+        animator.SetFloat("Horizontal", moveHorizontal);
+
+        if (moveVertical == 0f && moveHorizontal != 0f)
+        {
+            animator.SetTrigger("stopVertical");
+        }
+
+        else if (moveHorizontal == 0f && moveVertical != 0f)
+        {
+            animator.SetTrigger("stopHorizontal");
+        }
+
+        else if (moveVertical == 0f && moveHorizontal == 0f)
+        {
+            animator.SetTrigger("stop");
+            Debug.Log(moveVertical + moveHorizontal);
+        }
 
         // Расстояние, пройденное игроком
         distance += (float)Math.Round(movement.sqrMagnitude, 3);
