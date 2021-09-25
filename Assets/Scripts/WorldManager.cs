@@ -5,11 +5,6 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private GameObject forestLocation;
     private GameObject currentLocation;
 
-    /*public void Awake()
-    {
-        CreateLevel();
-    }*/
-
     // Создание локации
     public void CreateLevel()
     {

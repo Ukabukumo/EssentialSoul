@@ -8,6 +8,7 @@ public class Defense : MonoBehaviour
     [SerializeField] private GameObject swordPref;
     [SerializeField] private GameObject arrowPref;
     [SerializeField] private GameObject spellPref;
+    [SerializeField] private GameObject warningPref;
     private GameObject storage;
     private GameObject miniPlayer;
     private float defenseTime;
@@ -95,6 +96,55 @@ public class Defense : MonoBehaviour
         }
     }
 
+    // Предупреждение появления атакующего элемента
+    private IEnumerator WarningAttack(float _time, int _type, Vector3 _position, Quaternion _rotation)
+    {
+        // Создание предупреждающего знака
+        GameObject _warning = Instantiate(warningPref, new Vector3(_position.x, _position.y, -2f), Quaternion.identity, storage.transform);
+        
+        // Время предупреждения
+        yield return new WaitForSeconds(_time);
+
+        // Уничтожение предупреждающего знака
+        if (_warning != null)
+        {
+            Destroy(_warning);
+        }
+        
+        // Создание меча
+        if (_type == 1)
+        {
+            // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
+            if (defenseTime > 0)
+            {
+                GameObject _sword = Instantiate(swordPref, _position, _rotation, storage.transform);
+                _sword.GetComponent<Sword>().SwordInit(enemy.swordAttack.speed);
+            }
+        }
+
+        // Создание стрелы
+        else if (_type == 2)
+        {
+            // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
+            if (defenseTime > 0)
+            {
+                GameObject _arrow = Instantiate(arrowPref, _position, _rotation, storage.transform);
+                _arrow.GetComponent<Arrow>().ArrowInit(enemy.arrowAttack.speed);
+            }
+        }
+
+        // Создание заклинания
+        else if (_type == 3)
+        {
+            // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
+            if (defenseTime > 0)
+            {
+                GameObject _spell = Instantiate(spellPref, _position, Quaternion.identity, storage.transform);
+            }
+        }
+        
+    }
+
     // Проверка окончания миниигры
     public bool IsEnd()
     {
@@ -164,8 +214,8 @@ public class Defense : MonoBehaviour
                 break;
         }
 
-        GameObject _sword = Instantiate(swordPref, _position, _rotation, storage.transform);
-        _sword.GetComponent<Sword>().SwordInit(enemy.swordAttack.speed);
+        // Появление предупреждающего знака в заданной позиции
+        StartCoroutine(WarningAttack(1f, 1, _position, _rotation));
     }
 
     // Генерация стрелы
@@ -212,8 +262,8 @@ public class Defense : MonoBehaviour
                 break;
         }
 
-        GameObject _arrow = Instantiate(arrowPref, _position, _rotation, storage.transform);
-        _arrow.GetComponent<Arrow>().ArrowInit(enemy.arrowAttack.speed);
+        // Появление предупреждающего знака в заданной позиции
+        StartCoroutine(WarningAttack(1f, 2, _position, _rotation));
     }
 
     // Генерация заклинания
@@ -273,7 +323,8 @@ public class Defense : MonoBehaviour
         float _y = _playerPos.y + Random.Range(_downBorder, _upBorder);
         Vector3 _position = new Vector3(_x, _y, _playerPos.z);
 
-        GameObject _spell = Instantiate(spellPref, _position, Quaternion.identity, storage.transform);
+        // Появление предупреждающего знака в заданной позиции
+        StartCoroutine(WarningAttack(1f, 3, _position, Quaternion.identity));
     }
 
     // Очистка сцены

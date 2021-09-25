@@ -12,6 +12,9 @@ public class Sword : MonoBehaviour
         speed = _speed;
         startPosition = transform.position;
 
+        Vector2 movement = new Vector2(0f, transform.localScale.y);
+        transform.Translate(movement);
+
         StartCoroutine("Act");
     }
 
@@ -39,6 +42,8 @@ public class Sword : MonoBehaviour
         transform.position = startPosition;
         transform.rotation *= Quaternion.Euler(0f, 0f, speed);
 
+        // Перемещение меча вперёд, чтобы он описывал своим движением окружность,
+        // а не вращался на месте
         Vector2 movement = new Vector2(0f, transform.localScale.y);
         transform.Translate(movement);
     }

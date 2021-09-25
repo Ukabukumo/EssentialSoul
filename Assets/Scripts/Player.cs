@@ -32,20 +32,22 @@ public class Player : MonoBehaviour
         animator.SetFloat("Vertical", moveVertical);
         animator.SetFloat("Horizontal", moveHorizontal);
 
+        // ”словие, что игрок не двигаетс€ по вертикали
         if (moveVertical == 0f && moveHorizontal != 0f)
         {
             animator.SetTrigger("stopVertical");
         }
 
+        // ”словие, что игрок не двигаетс€ по горизонтали
         else if (moveHorizontal == 0f && moveVertical != 0f)
         {
             animator.SetTrigger("stopHorizontal");
         }
 
+        // ”словие, что игрок неподвижен
         else if (moveVertical == 0f && moveHorizontal == 0f)
         {
             animator.SetTrigger("stop");
-            Debug.Log(moveVertical + moveHorizontal);
         }
 
         // –ассто€ние, пройденное игроком

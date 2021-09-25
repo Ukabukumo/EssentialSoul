@@ -29,6 +29,7 @@ public class Armor : MonoBehaviour
 
         Vector2 movement = new Vector2(_x, _y);
         transform.position = new Vector3(_x, _y, transform.position.z);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 
     // Появление защиты

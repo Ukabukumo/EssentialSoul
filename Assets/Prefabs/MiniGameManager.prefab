@@ -47,7 +47,7 @@ MonoBehaviour:
   aimMainPref: {fileID: 1117093681022713808, guid: 3c74c034efe7f4843889661d22118c6d, type: 3}
   aimFakePref: {fileID: 5532371603036672606, guid: c3601cbdb89e2424589ccd5fccd5128e, type: 3}
   targetPref: {fileID: 4713315193619738144, guid: aa6ed6dab38dd98459d9342f4c4bac17, type: 3}
-  attackBGPref: {fileID: 6519902514912974979, guid: 019955bd62803824f85a9899d3a90d38, type: 3}
+  attackBGPref: {fileID: 1831207393473671778, guid: 019955bd62803824f85a9899d3a90d38, type: 3}
   armorPref: {fileID: 5152359543407783019, guid: b2f97b1fbeee08343becadb38bc45917, type: 3}
 --- !u!114 &-7282261525564215086
 MonoBehaviour:
@@ -66,3 +66,4 @@ MonoBehaviour:
   swordPref: {fileID: 8343203560788140965, guid: 66a6ff5ab1b8267408b6ddba571c3988, type: 3}
   arrowPref: {fileID: 794809187958589296, guid: 7b4d3c4e72e3d734ebe9087dcecc8c84, type: 3}
   spellPref: {fileID: 4272154559928934598, guid: 6eae7d00efc27a04aaea4a23e199d2d2, type: 3}
+  warningPref: {fileID: 7316698713759603, guid: faacef9661a05044aaaa39a72ae18937, type: 3}

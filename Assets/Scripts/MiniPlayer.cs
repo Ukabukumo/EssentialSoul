@@ -132,7 +132,6 @@ public class MiniPlayer : MonoBehaviour
 
             health -= enemy.spellAttack.power;
 
-            Debug.Log(_other.name);
             attackable = false;
             StartCoroutine("DamageCooldown");
         }
