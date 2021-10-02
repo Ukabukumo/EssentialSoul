@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
+using System;
 
 public class BattleManager : MonoBehaviour
 {
@@ -13,6 +15,16 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Button leaveButton;
     [SerializeField] private GameObject miniGameManager;
     [SerializeField] private GameObject miniGameCamera;
+    [SerializeField] private GameObject enemyHealthInfo;
+    [SerializeField] private GameObject enemyArmorInfo;
+    [SerializeField] private GameObject aimCloneSign;
+    [SerializeField] private GameObject inverseSign;
+    [SerializeField] private GameObject swordSign;
+    [SerializeField] private GameObject arrowSign;
+    [SerializeField] private GameObject spellSign;
+    [SerializeField] private GameObject playerHealthInfo;
+    [SerializeField] private GameObject timeInfo;
+    [SerializeField] private GameObject miniGameUI;
     private EventSystem eventSystem;
     private GameObject mgm;
     private float battleTime;   // Время для текущего этапа
@@ -56,8 +68,8 @@ public class BattleManager : MonoBehaviour
         player.SetActive(false);
         miniGameCamera.SetActive(true);
 
-        WindowInit();
         CreateEnemy();
+        WindowInit();
     }
 
     // Инициализация окна битвы
@@ -65,6 +77,29 @@ public class BattleManager : MonoBehaviour
     {
         // Появление экрана битвы
         battleBG.SetActive(true);
+
+        // Индикатор здоровья противника
+        enemyHealthInfo.GetComponent<TextMeshProUGUI>().text = Convert.ToString(enemy.health);
+
+        // Индикатор защиты противника
+        enemyArmorInfo.GetComponent<TextMeshProUGUI>().text = Convert.ToString(enemy.nArmor);
+
+        // Индикатор оружия противника
+        swordSign.SetActive(enemy.swordAttack.active);
+        arrowSign.SetActive(enemy.arrowAttack.active);
+        spellSign.SetActive(enemy.spellAttack.active);
+
+        // Индикатор инверсивного движения
+        inverseSign.SetActive(enemy.inverseMove);
+
+        // Индикатор фальшивых прицелов
+        aimCloneSign.SetActive(enemy.nFalseAim > 0);
+
+        // Индикатор здоровья игрока
+        playerHealthInfo.GetComponent<TextMeshProUGUI>().text = Convert.ToString(playerHealth);
+
+        // Индикатор времени на текущий этап боя
+        timeInfo.GetComponent<TextMeshProUGUI>().text = "TIME: " + Convert.ToString(battleTime);
 
         // Если этап атаки
         if (battleStage == 1)
@@ -95,7 +130,7 @@ public class BattleManager : MonoBehaviour
     private void CreateEnemy()
     {
         // Генерация типа противника по характеристикам
-        int n = Random.Range(0, 3);
+        int n = UnityEngine.Random.Range(0, 3);
         enemy = new Enemy();
 
         switch (n)
@@ -152,7 +187,7 @@ public class BattleManager : MonoBehaviour
     {
         // Инициализация миниигры атака
         mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), 
-            enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove);
+            enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove, miniGameUI);
 
         battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");
@@ -162,7 +197,7 @@ public class BattleManager : MonoBehaviour
     private void DefenseButtonAct()
     {
         // Инициализация миниигры защита
-        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy);
+        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy, miniGameUI);
 
         battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");

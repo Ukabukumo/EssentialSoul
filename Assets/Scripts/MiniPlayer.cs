@@ -8,6 +8,7 @@ public class MiniPlayer : MonoBehaviour
     private float cooldown;     // ¬рем€ неу€звимости после получени€ урона
     private Enemy enemy;        // ’арактеристики противника
     private bool attackable;    // ‘лаг у€звимости игрока
+    private Animator animator;
 
     // »нициализаци€ игрока
     public void MiniPlayerInit(int _health, Enemy _enemy)
@@ -17,6 +18,8 @@ public class MiniPlayer : MonoBehaviour
 
         attackable = true;
         cooldown = 1f;
+
+        animator = GetComponent<Animator>();
 
         StartCoroutine("Act");
     }
@@ -35,8 +38,12 @@ public class MiniPlayer : MonoBehaviour
     // Ќеу€звимость игрока
     private IEnumerator DamageCooldown()
     {
+        animator.SetBool("Attackable", false);
+        
         yield return new WaitForSeconds(cooldown);
+        
         attackable = true;
+        animator.SetBool("Attackable", true);
     }
 
     // ѕередвижение игрока

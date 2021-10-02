@@ -1,5 +1,7 @@
 using UnityEngine;
-using System.Collections;   
+using System.Collections;
+using TMPro;
+using System;
 
 public class Defense : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Defense : MonoBehaviour
     [SerializeField] private GameObject arrowPref;
     [SerializeField] private GameObject spellPref;
     [SerializeField] private GameObject warningPref;
+    private GameObject miniGameUI;
     private GameObject storage;
     private GameObject miniPlayer;
     private float defenseTime;
@@ -16,17 +19,21 @@ public class Defense : MonoBehaviour
     private Enemy enemy;
 
     // Инициализация миниигры защита
-    public void DefenseInit(float _defenseTime, int _playerHealth, Enemy _enemy)
+    public void DefenseInit(float _defenseTime, int _playerHealth, Enemy _enemy, GameObject _miniGameUI)
     {
         defenseTime = _defenseTime;
         playerHealth = _playerHealth;
         enemy = _enemy;
+        miniGameUI = _miniGameUI;
 
         // Хранилище для объектов сцены
         storage = new GameObject("Storage");
 
         // Создание фона
         Instantiate(defenseBGPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
+
+        // Активация интерфейса в миниигре
+        miniGameUI.SetActive(true);
 
         // Создание игрока в миниигре
         miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -1.1f), Quaternion.identity, storage.transform);
@@ -56,12 +63,14 @@ public class Defense : MonoBehaviour
     // Таймер защиты
     private IEnumerator DefenseTimer()
     {
+        TextMeshProUGUI _timeInfo = miniGameUI.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
         while (!IsEnd())
         {
             yield return new WaitForFixedUpdate();
             defenseTime -= Time.fixedDeltaTime;
             playerHealth = miniPlayer.GetComponent<MiniPlayer>().GetHealth();
-            //Debug.Log(defenseTime);
+            _timeInfo.text = Convert.ToString(Math.Round(defenseTime, 2));
         }
 
         ClearScene();
@@ -175,7 +184,7 @@ public class Defense : MonoBehaviour
 
         float _radius = 1f;
 
-        int _angle = Random.Range(0, 360);
+        int _angle = UnityEngine.Random.Range(0, 360);
         float _radian = _angle * Mathf.PI / 180f;
 
         float _x = _radius * Mathf.Cos(_radian);
@@ -195,8 +204,8 @@ public class Defense : MonoBehaviour
         Quaternion _rotation;
         Vector3 _playerPos = miniPlayer.transform.position;
         float _borderPos = 4f;
-        int _side = Random.Range(0, 4);
-        int _offset = Random.Range(-1, 2);
+        int _side = UnityEngine.Random.Range(0, 4);
+        int _offset = UnityEngine.Random.Range(-1, 2);
 
         // Определение стартовой позиции
         switch (_side)
@@ -239,10 +248,10 @@ public class Defense : MonoBehaviour
     // Генерация заклинания
     private void GenSpell()
     {
-        Vector3 _playerPos = miniPlayer.transform.position;
-        float _diff = enemy.spellAttack.distance;   // Расстояние спавна от игрока
-        float _border = 4f;                         // Границы игрового поля
-        float _upBorder, _downBorder, _leftBorder, _rightBorder;
+        Vector3 _playerPos = miniPlayer.transform.position;        // Позиция игрока
+        float _diff = enemy.spellAttack.distance;                  // Расстояние спавна от игрока
+        float _border = 4f;                                        // Границы игрового поля
+        float _upBorder, _downBorder, _leftBorder, _rightBorder;   // Границы поля для спавна
 
         // Сравнение расстояния до ВЕРХНЕЙ границы
         if (_border - _playerPos.y >= _diff)
@@ -289,8 +298,8 @@ public class Defense : MonoBehaviour
         }
 
         // Генерация случайной позиции в заданном поле вокруг игрока
-        float _x = _playerPos.x + Random.Range(_leftBorder, _rightBorder);
-        float _y = _playerPos.y + Random.Range(_downBorder, _upBorder);
+        float _x = _playerPos.x + UnityEngine.Random.Range(_leftBorder, _rightBorder);
+        float _y = _playerPos.y + UnityEngine.Random.Range(_downBorder, _upBorder);
         Vector3 _position = new Vector3(_x, _y, _playerPos.z);
 
         // Появление предупреждающего знака в заданной позиции
@@ -304,5 +313,8 @@ public class Defense : MonoBehaviour
         {
             Destroy(storage);
         }
+
+        // Деактивация интерфейса в миниигре
+        miniGameUI.SetActive(false);
     }
 }

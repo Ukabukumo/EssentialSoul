@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
 using System;
 
 public class Attack : MonoBehaviour
@@ -9,6 +10,7 @@ public class Attack : MonoBehaviour
     [SerializeField] private GameObject targetPref;
     [SerializeField] private GameObject attackBGPref;
     [SerializeField] private GameObject armorPref;
+    private GameObject miniGameUI;
     private GameObject storage;
     private GameObject aim;
     private int[] sectors;
@@ -21,7 +23,7 @@ public class Attack : MonoBehaviour
 
     // Инициализация миниигры атака
     public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, 
-        int _nArmor, int _nFakeAim, bool _inverseMove)
+        int _nArmor, int _nFakeAim, bool _inverseMove, GameObject _miniGameUI)
     {
         // Условные сектора окружности для размещения прицелов
         sectors = new int[36];
@@ -36,12 +38,16 @@ public class Attack : MonoBehaviour
         nArmor = _nArmor;
         nFakeAim = _nFakeAim;
         inverseMove = _inverseMove;
+        miniGameUI = _miniGameUI;
 
         // Хранилище для объектов сцены
         storage = new GameObject("Storage");
 
         // Создание фона
         Instantiate(attackBGPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
+
+        // Активация интерфейса в миниигре
+        miniGameUI.SetActive(true);
 
         // Создание прицела
         int _angle;
@@ -79,11 +85,13 @@ public class Attack : MonoBehaviour
     // Таймер атаки
     private IEnumerator AttackTimer()
     {
+        TextMeshProUGUI _timeInfo = miniGameUI.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
         while (!IsEnd())
         {
             yield return new WaitForFixedUpdate();
             attackTime -= Time.fixedDeltaTime;
-            //Debug.Log(attackTime);
+            _timeInfo.text = Convert.ToString(Math.Round(attackTime, 2));
         }
 
         ClearScene();
@@ -96,6 +104,9 @@ public class Attack : MonoBehaviour
         {
             Destroy(storage);
         }
+
+        // Деактивация интерфейса в миниигре
+        miniGameUI.SetActive(false);
     }
 
     // Проверка окончания миниигры
