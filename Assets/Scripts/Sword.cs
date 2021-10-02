@@ -7,10 +7,27 @@ public class Sword : MonoBehaviour
     private Vector3 startPosition;
 
     // Установка характеристик меча
-    public void SwordInit(float _speed)
+    public void SwordInit(float _speed, Transform _playerPos)
     {
         speed = _speed;
         startPosition = transform.position;
+
+        transform.right = _playerPos.position - transform.position;
+
+        int _direction = Random.Range(0, 2);
+
+        // Вращение ПО часовой стрелке
+        if (_direction == 0)
+        {
+            transform.rotation *= Quaternion.Euler(0f, 180f, 0f);
+        }
+
+        // Вращение ПРОТИВ часовой стрелки
+        else
+        {
+            transform.rotation *= Quaternion.Euler(180f, 180f, 0f);
+        }
+        
 
         Vector2 movement = new Vector2(0f, transform.localScale.y);
         transform.Translate(movement);

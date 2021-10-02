@@ -46,6 +46,7 @@ public class Defense : MonoBehaviour
             StartCoroutine("SpawnArrow", enemy.arrowAttack.frequency);
         }
 
+        // Запуск генерации заклинаний
         if (enemy.spellAttack.active)
         {
             StartCoroutine("SpawnSpell", enemy.spellAttack.frequency);
@@ -66,6 +67,16 @@ public class Defense : MonoBehaviour
         ClearScene();
     }
 
+    // Создание меча с заданной частотой
+    private IEnumerator SpawnSword(float _frequency)
+    {
+        while (!IsEnd())
+        {
+            GenSword();
+            yield return new WaitForSeconds(_frequency);
+        }
+    }
+
     // Создание стрел с заданной частотой
     private IEnumerator SpawnArrow(float _frequency)
     {
@@ -82,16 +93,6 @@ public class Defense : MonoBehaviour
         while (!IsEnd())
         {
             GenSpell();
-            yield return new WaitForSeconds(_frequency);
-        }
-    }
-
-    // Создание меча с заданной частотой
-    private IEnumerator SpawnSword(float _frequency)
-    {
-        while (!IsEnd())
-        {
-            GenSword();
             yield return new WaitForSeconds(_frequency);
         }
     }
@@ -115,10 +116,10 @@ public class Defense : MonoBehaviour
         if (_type == 1)
         {
             // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
-            if (defenseTime > 0)
+            if (!IsEnd())
             {
                 GameObject _sword = Instantiate(swordPref, _position, _rotation, storage.transform);
-                _sword.GetComponent<Sword>().SwordInit(enemy.swordAttack.speed);
+                _sword.GetComponent<Sword>().SwordInit(enemy.swordAttack.speed, miniPlayer.transform);
             }
         }
 
@@ -126,7 +127,7 @@ public class Defense : MonoBehaviour
         else if (_type == 2)
         {
             // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
-            if (defenseTime > 0)
+            if (!IsEnd())
             {
                 GameObject _arrow = Instantiate(arrowPref, _position, _rotation, storage.transform);
                 _arrow.GetComponent<Arrow>().ArrowInit(enemy.arrowAttack.speed);
@@ -137,9 +138,10 @@ public class Defense : MonoBehaviour
         else if (_type == 3)
         {
             // Чтобы избежать обращение к уже уничтоженным объектам после окончания миниигры
-            if (defenseTime > 0)
+            if (!IsEnd())
             {
                 GameObject _spell = Instantiate(spellPref, _position, Quaternion.identity, storage.transform);
+                _spell.GetComponent<Spell>().SpellInit(enemy.spellAttack.lifetime);
             }
         }
         
@@ -169,50 +171,18 @@ public class Defense : MonoBehaviour
     // Генерация меча
     private void GenSword()
     {
-        Vector3 _position;
-        Quaternion _rotation;
         Vector3 _playerPos = miniPlayer.transform.position;
-        float _startPos = 1f;
 
-        // Сторона появления
-        int _side = Random.Range(0, 4);
+        float _radius = 1f;
 
-        // Направление вращения (0 - против часовой / 1 - по часовой)
-        int _direction = Random.Range(0, 2);
+        int _angle = Random.Range(0, 360);
+        float _radian = _angle * Mathf.PI / 180f;
 
-        // Определение стартовой позиции
-        switch (_side)
-        {
-            // Сверху
-            case 0:
-                _position = new Vector3(_playerPos.x, _playerPos.y + _startPos, _playerPos.z);
-                _rotation = Quaternion.Euler(0f, 180f * _direction, 90f);
-                break;
+        float _x = _radius * Mathf.Cos(_radian);
+        float _y = _radius * Mathf.Sin(_radian);
 
-            // Снизу
-            case 1:
-                _position = new Vector3(_playerPos.x, _playerPos.y - _startPos, _playerPos.z);
-                _rotation = Quaternion.Euler(0f, 180f * _direction, 270f);
-                break;
-
-            // Слева
-            case 2:
-                _position = new Vector3(_playerPos.x - _startPos, _playerPos.y, _playerPos.z);
-                _rotation = Quaternion.Euler(180f * _direction, 0f, 180f);
-                break;
-
-            // Справа
-            case 3:
-                _position = new Vector3(_playerPos.x + _startPos, _playerPos.y, _playerPos.z);
-                _rotation = Quaternion.Euler(180f * _direction, 0f, 0f);
-                break;
-
-            // По-умолчанию (Снизу)
-            default:
-                _position = new Vector3(_playerPos.x, -_startPos, _playerPos.z);
-                _rotation = Quaternion.Euler(0f, 180f * _direction, 270f);
-                break;
-        }
+        Vector3 _position = new Vector3(_playerPos.x + _x, _playerPos.y + _y, _playerPos.z);
+        Quaternion _rotation = Quaternion.Euler(0f, 0f, 0f);
 
         // Появление предупреждающего знака в заданной позиции
         StartCoroutine(WarningAttack(1f, 1, _position, _rotation));
@@ -270,8 +240,8 @@ public class Defense : MonoBehaviour
     private void GenSpell()
     {
         Vector3 _playerPos = miniPlayer.transform.position;
-        float _diff = 2f;
-        float _border = 4f;
+        float _diff = enemy.spellAttack.distance;   // Расстояние спавна от игрока
+        float _border = 4f;                         // Границы игрового поля
         float _upBorder, _downBorder, _leftBorder, _rightBorder;
 
         // Сравнение расстояния до ВЕРХНЕЙ границы

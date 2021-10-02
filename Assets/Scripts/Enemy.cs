@@ -5,8 +5,8 @@ public class Enemy
     // Характеристики атаки мечом
     public struct SwordAttack
     {
-        public bool active;     // Наличие вида атаки
-        public int power;       // Сила
+        public bool active;       // Наличие вида атаки
+        public int power;         // Сила
         public float speed;       // Скорость
         public float frequency;   // Частота появления
     }
@@ -14,8 +14,8 @@ public class Enemy
     // Характеристики атаки стрелами
     public struct ArrowAttack
     {
-        public bool active;     // Наличие вида атаки
-        public int power;       // Сила
+        public bool active;       // Наличие вида атаки
+        public int power;         // Сила
         public float speed;       // Скорость
         public float frequency;   // Частота появления
     }
@@ -23,10 +23,11 @@ public class Enemy
     // Характеристики атаки заклинаниями
     public struct SpellAttack
     {
-        public bool active;     // Наличие вида атаки
-        public int power;       // Сила
-        public float speed;       // Скорость
+        public bool active;       // Наличие вида атаки
+        public int power;         // Сила
+        public float lifetime;    // Время жизни
         public float frequency;   // Частота появления
+        public float distance;    // Расстояние от игрока
     }
 
     public SwordAttack swordAttack = new SwordAttack();
@@ -52,8 +53,9 @@ public class Enemy
 
         spellAttack.active = false;
         spellAttack.power = 0;
-        spellAttack.speed = 0f;
+        spellAttack.lifetime = 0f;
         spellAttack.frequency = 0f;
+        spellAttack.distance = 0f;
 
         health = 0;
         nArmor = 0;

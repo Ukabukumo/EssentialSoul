@@ -95,37 +95,48 @@ public class BattleManager : MonoBehaviour
     private void CreateEnemy()
     {
         // Генерация типа противника по характеристикам
-        int n = Random.Range(0, 1);
+        int n = Random.Range(0, 3);
         enemy = new Enemy();
+
         switch (n)
         {
+            // Простой воин
             case 0:
-                enemy.health = 10;
+                enemy.health = 20;
+                enemy.nArmor = 5;
 
                 enemy.swordAttack.active = true;
                 enemy.swordAttack.power = 1;
-                enemy.swordAttack.speed = 2f;
+                enemy.swordAttack.speed = 3f;
                 enemy.swordAttack.frequency = 1f;
+
+                break;
+
+            // Простой лучник
+            case 1:
+                enemy.health = 15;
+                enemy.nArmor = 2;
+                enemy.inverseMove = true;
 
                 enemy.arrowAttack.active = true;
                 enemy.arrowAttack.power = 1;
-                enemy.arrowAttack.speed = 5f;
+                enemy.arrowAttack.speed = 6f;
                 enemy.arrowAttack.frequency = 0.5f;
+                
+                break;
+
+            // Простой заклинатель
+            case 2:
+                enemy.health = 10;
+                enemy.nArmor = 2;
+                enemy.nFalseAim = 2;
 
                 enemy.spellAttack.active = true;
                 enemy.spellAttack.power = 1;
-                enemy.spellAttack.frequency = 0.5f;
+                enemy.spellAttack.lifetime = 5f;
+                enemy.spellAttack.frequency = 0.3f;
+                enemy.spellAttack.distance = 1f;
 
-                enemy.nArmor = 5;
-                enemy.nFalseAim = 2;
-                //enemy.inverseMove = true;
-                break;
-
-            case 1:
-                enemy.health = 15;
-                enemy.nArmor = 10;
-                enemy.nFalseAim = 3;
-                //enemy.inverseMove = true;
                 break;
 
             default:
