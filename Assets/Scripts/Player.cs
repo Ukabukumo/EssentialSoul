@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed = 5f;
     private Animator animator;
     private float distance = 0f;
+    private int maxHealth = 5;
     private int health = 5;
     private int damage = 1;
 
@@ -108,5 +109,11 @@ public class Player : MonoBehaviour
     public int GetHealth()
     {
         return health;
+    }
+
+    // ѕолучение максимального здоровь€ игрока
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 }

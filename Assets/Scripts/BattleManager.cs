@@ -17,6 +17,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject miniGameCamera;
     [SerializeField] private GameObject enemyHealthInfo;
     [SerializeField] private GameObject enemyArmorInfo;
+    [SerializeField] private GameObject aimCloneInfo;
     [SerializeField] private GameObject aimCloneSign;
     [SerializeField] private GameObject inverseSign;
     [SerializeField] private GameObject swordSign;
@@ -27,10 +28,11 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject miniGameUI;
     private EventSystem eventSystem;
     private GameObject mgm;
-    private float battleTime;   // Время для текущего этапа
-    private int battleStage;    // Этап боя (1 - атака / 2 - защита)
-    private Enemy enemy;        // Характеристики противника
-    private int playerHealth;   // Здоровье игрока
+    private float battleTime;      // Время для текущего этапа
+    private int battleStage;       // Этап боя (1 - атака / 2 - защита)
+    private Enemy enemy;           // Характеристики противника
+    private int playerHealth;      // Здоровье игрока
+    private int playerMaxHealth;   // Максимальное здоровье игрока
 
     private void Start()
     {
@@ -64,6 +66,9 @@ public class BattleManager : MonoBehaviour
         // Получение здоровья игрока
         playerHealth = player.GetComponent<Player>().GetHealth();
 
+        // Получение максимального здоровья игрока
+        playerMaxHealth = player.GetComponent<Player>().GetMaxHealth();
+
         // Остановка игрока
         player.SetActive(false);
         miniGameCamera.SetActive(true);
@@ -94,9 +99,12 @@ public class BattleManager : MonoBehaviour
 
         // Индикатор фальшивых прицелов
         aimCloneSign.SetActive(enemy.nFalseAim > 0);
+        aimCloneInfo.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = 
+            Convert.ToString(enemy.nFalseAim);
 
         // Индикатор здоровья игрока
-        playerHealthInfo.GetComponent<TextMeshProUGUI>().text = Convert.ToString(playerHealth);
+        playerHealthInfo.GetComponent<TextMeshProUGUI>().text = 
+            Convert.ToString(playerMaxHealth + " / " + playerHealth);
 
         // Индикатор времени на текущий этап боя
         timeInfo.GetComponent<TextMeshProUGUI>().text = "TIME: " + Convert.ToString(battleTime);
