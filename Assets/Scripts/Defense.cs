@@ -30,13 +30,13 @@ public class Defense : MonoBehaviour
         storage = new GameObject("Storage");
 
         // Создание фона
-        Instantiate(defenseBGPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
+        Instantiate(defenseBGPref, new Vector3(0f, 0f, -10f), Quaternion.identity, storage.transform);
 
         // Активация интерфейса в миниигре
         miniGameUI.SetActive(true);
 
         // Создание игрока в миниигре
-        miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -1.1f), Quaternion.identity, storage.transform);
+        miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -11f), Quaternion.identity, storage.transform);
         miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(playerHealth, enemy);
 
         StartCoroutine("DefenseTimer");
@@ -110,7 +110,7 @@ public class Defense : MonoBehaviour
     private IEnumerator WarningAttack(float _time, int _type, Vector3 _position, Quaternion _rotation)
     {
         // Создание предупреждающего знака
-        GameObject _warning = Instantiate(warningPref, new Vector3(_position.x, _position.y, -2f), Quaternion.identity, storage.transform);
+        GameObject _warning = Instantiate(warningPref, new Vector3(_position.x, _position.y, -12f), Quaternion.identity, storage.transform);
         
         // Время предупреждения
         yield return new WaitForSeconds(_time);

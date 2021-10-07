@@ -740,7 +740,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372279062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -964,13 +964,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -3605,8 +3605,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105294fd79ee65f43ad525f46e6497a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forestLocation: {fileID: 6903748202482424633, guid: 88d0ac751cf06994baea37803ae6b66c, type: 3}
-  tree: {fileID: 2690589529378690128, guid: 25590b31c16936342866de3277a91707, type: 3}
+  forestLocationPref: {fileID: 6903748202482424633, guid: 88d0ac751cf06994baea37803ae6b66c, type: 3}
+  treePref: {fileID: 2690589529378690128, guid: 25590b31c16936342866de3277a91707, type: 3}
+  grassPref: {fileID: 2330655780267397981, guid: fc4a8f88bf8291c47a91c969bf34255e, type: 3}
 --- !u!114 &1728450646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3638,6 +3639,7 @@ MonoBehaviour:
   playerHealthInfo: {fileID: 1557654665}
   timeInfo: {fileID: 1361654337}
   miniGameUI: {fileID: 1580942668}
+  battleInfo: {fileID: 451450333}
 --- !u!4 &1728450647
 Transform:
   m_ObjectHideFlags: 0
@@ -4245,9 +4247,10 @@ GameObject:
   - component: {fileID: 4351011442711125700}
   - component: {fileID: 4351011442711125703}
   - component: {fileID: 4351011442711125704}
+  - component: {fileID: 4351011442711125705}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4316,7 +4319,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.2}
+  m_Offset: {x: 0, y: -0.31493098}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4327,7 +4330,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.45, y: 0.45}
+  m_Size: {x: 0.45, y: 0.2201381}
   m_EdgeRadius: 0
 --- !u!4 &4351011442711125702
 Transform:
@@ -4376,6 +4379,27 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!50 &4351011442711125705
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4351011442711125699}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1 &4351011442741820684
 GameObject:
   m_ObjectHideFlags: 0

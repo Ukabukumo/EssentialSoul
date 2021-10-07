@@ -26,6 +26,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject playerHealthInfo;
     [SerializeField] private GameObject timeInfo;
     [SerializeField] private GameObject miniGameUI;
+    [SerializeField] private GameObject battleInfo;
     private EventSystem eventSystem;
     private GameObject mgm;
     private float battleTime;      // Время для текущего этапа
@@ -72,6 +73,9 @@ public class BattleManager : MonoBehaviour
         // Остановка игрока
         player.SetActive(false);
         miniGameCamera.SetActive(true);
+
+        // Вывод информации о начале боя
+        battleInfo.GetComponent<TextMeshProUGUI>().text = "YOU OVERTOOK THE DEMON!";
 
         CreateEnemy();
         WindowInit();
@@ -230,6 +234,12 @@ public class BattleManager : MonoBehaviour
         if (battleStage == 1)
         {
             yield return new WaitWhile(() => !mgm.GetComponent<Attack>().IsEnd());
+
+            // Вывод нанесённого урона
+            battleInfo.GetComponent<TextMeshProUGUI>().text = "YOU DEALTH " + 
+                Convert.ToString(enemy.health - mgm.GetComponent<Attack>().GetEnemyHealth()) +
+                " DAMAGE!";
+
             enemy.health = mgm.GetComponent<Attack>().GetEnemyHealth();
 
             battleStage = 2;
@@ -239,6 +249,12 @@ public class BattleManager : MonoBehaviour
         else if (battleStage == 2)
         {
             yield return new WaitWhile(() => !mgm.GetComponent<Defense>().IsEnd());
+
+            // Вывод полученного урона
+            battleInfo.GetComponent<TextMeshProUGUI>().text = "YOU TOOK " +
+                Convert.ToString(playerHealth - mgm.GetComponent<Defense>().GetPlayerHealth()) +
+                " DAMAGE!";
+
             playerHealth = mgm.GetComponent<Defense>().GetPlayerHealth();
 
             battleStage = 1;
@@ -254,19 +270,62 @@ public class BattleManager : MonoBehaviour
         // Условие победы
         if (enemy.health <= 0)
         {
-            ExitBattle();
+            //ExitBattle();
+            //StartCoroutine("ExitBattle");
+            StartCoroutine("ExitConfirm");
         }
 
         // Условие проигрыша
         else if (playerHealth <= 0)
         {
-            ExitBattle();
+            //ExitBattle();
+            //StartCoroutine("ExitBattle");
+            ClearScene();
             GetComponent<MainMenuManager>().MainMenuInit();
         }
     }
 
     // Закрытие окна битвы
     private void ExitBattle()
+    {
+        // Убираем меню битвы
+        battleBG.SetActive(false);
+
+        // Убираем вторую камеру
+        miniGameCamera.SetActive(false);
+
+        // Передача управления игроку
+        player.SetActive(true);
+    }
+
+    // Действия перед закрытием окна
+    private IEnumerator ExitConfirm()
+    {
+        // Вывод подсказки об окончании битвы
+        battleInfo.GetComponent<TextMeshProUGUI>().text = "## YOU WIN! \n## Press ENTER to exit!";
+
+        // Убираем кнопки
+        attackButton.gameObject.SetActive(false);
+        defenseButton.gameObject.SetActive(false);
+        itemsButton.gameObject.SetActive(false);
+        leaveButton.gameObject.SetActive(false);
+
+        // Ожидание нажатия клавиши для окончания битвы
+        while (!Input.GetKey("return"))
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        // Возвращаем кнопки
+        itemsButton.gameObject.SetActive(true);
+        leaveButton.gameObject.SetActive(true);
+
+        // Очищаем сцену
+        ClearScene();
+    }
+
+    // Очистка окна битвы
+    private void ClearScene()
     {
         // Убираем меню битвы
         battleBG.SetActive(false);

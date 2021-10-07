@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private int maxHealth = 5;
     private int health = 5;
     private int damage = 1;
+    private bool isMove;
 
     private void Start()
     {
@@ -30,6 +31,10 @@ public class Player : MonoBehaviour
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
         transform.Translate(movement * speed * Time.fixedDeltaTime);
 
+        // Смена уровня фона
+        float _z = -1f + (transform.position.y - 20f) / 100f;
+        transform.position = new Vector3(transform.position.x, transform.position.y, _z);
+
         animator.SetFloat("Vertical", moveVertical);
         animator.SetFloat("Horizontal", moveHorizontal);
 
@@ -49,6 +54,13 @@ public class Player : MonoBehaviour
         else if (moveVertical == 0f && moveHorizontal == 0f)
         {
             animator.SetTrigger("stop");
+            isMove = false;
+        }
+
+        // Условие, что игрок движется
+        if (moveVertical != 0f || moveHorizontal != 0f)
+        {
+            isMove = true;
         }
 
         // Расстояние, пройденное игроком
@@ -115,5 +127,31 @@ public class Player : MonoBehaviour
     public int GetMaxHealth()
     {
         return maxHealth;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        // Проверка соприкосновения с травой при движении
+        if (collision.tag == "Grass")
+        {
+            if (isMove)
+            {
+                collision.GetComponent<Animator>().SetBool("Touch", true);
+            }
+
+            else
+            {
+                collision.GetComponent<Animator>().SetBool("Touch", false);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // Проверка окончания соприкосновения с травой
+        if (collision.tag == "Grass")
+        {
+            collision.GetComponent<Animator>().SetBool("Touch", false);
+        }
     }
 }

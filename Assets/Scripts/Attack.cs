@@ -44,7 +44,7 @@ public class Attack : MonoBehaviour
         storage = new GameObject("Storage");
 
         // Создание фона
-        Instantiate(attackBGPref, new Vector3(0f, 0f, -1f), Quaternion.identity, storage.transform);
+        Instantiate(attackBGPref, new Vector3(0f, 0f, -10f), Quaternion.identity, storage.transform);
 
         // Активация интерфейса в миниигре
         miniGameUI.SetActive(true);
@@ -61,10 +61,10 @@ public class Attack : MonoBehaviour
         float _radian = _angle * Mathf.PI / 180f;
         float _aimX = 4f * Mathf.Cos(_radian);
         float _aimY = 4f * Mathf.Sin(_radian);
-        aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -1.2f), Quaternion.identity, storage.transform);
+        aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -12f), Quaternion.identity, storage.transform);
 
         // Создание цели
-        Instantiate(targetPref, new Vector3(0, 0, -1.1f), Quaternion.identity, storage.transform);
+        Instantiate(targetPref, new Vector3(0, 0, -11f), Quaternion.identity, storage.transform);
 
         // Создание защиты противника
         GenArmor(nArmor);
@@ -155,7 +155,7 @@ public class Attack : MonoBehaviour
     {
         for (int i = 0; i < _num; i++)
         {
-            Instantiate(armorPref, new Vector3(0f, 0f, -1.2f), Quaternion.identity, storage.transform);
+            Instantiate(armorPref, new Vector3(0f, 0f, -12f), Quaternion.identity, storage.transform);
         }
     }
 
@@ -182,7 +182,7 @@ public class Attack : MonoBehaviour
             _radian = _angle * Mathf.PI / 180f;
             _x = 4f * Mathf.Cos(_radian);
             _y = 4f * Mathf.Sin(_radian);
-            Instantiate(aimFakePref, new Vector3(_x, _y, -1.2f), Quaternion.identity, storage.transform);
+            Instantiate(aimFakePref, new Vector3(_x, _y, -12f), Quaternion.identity, storage.transform);
         }
     }
 

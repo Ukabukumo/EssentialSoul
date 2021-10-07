@@ -42,7 +42,7 @@ public class MainMenuManager : MonoBehaviour
     private void StartButtonAct()
     {
         // Создание уровня
-        GetComponent<WorldManager>().CreateLevel();
+        GetComponent<WorldManager>().CreateLevel(player);
 
         // Активация игрока
         player.SetActive(true);
