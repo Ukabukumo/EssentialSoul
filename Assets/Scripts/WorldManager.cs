@@ -7,6 +7,7 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private GameObject treePref;
     [SerializeField] private GameObject grassPref;
     private GameObject currentLocation;
+    private GameObject environmentStorage;
     private GameObject player;
     private const int widthF = 41;        // Ширина поля
     private const int heightF = 41;       // Высота поля
@@ -21,8 +22,13 @@ public class WorldManager : MonoBehaviour
 
         currentLocation = Instantiate(forestLocationPref, new Vector3(0f, 0f, 0f), Quaternion.identity);
 
+        // Хранилище для объектов окружения локации
+        environmentStorage = new GameObject("Environment");
+
         ClearPlaces();
         PlayerSpot();
+
+        // Генерация окружения
         GenTrees(20);
         GenGrass(400);
     }
@@ -132,7 +138,7 @@ public class WorldManager : MonoBehaviour
             Vector3 _position = new Vector3(_x, _y, _z);
 
             // Создаём дерево в полученной позиции
-            Instantiate(treePref, _position, Quaternion.identity);
+            Instantiate(treePref, _position, Quaternion.identity, environmentStorage.transform);
         }
     }
 
@@ -173,7 +179,7 @@ public class WorldManager : MonoBehaviour
             Vector3 _position = new Vector3(_x, _y, _z);
 
             // Создаём дерево в полученной позиции
-            Instantiate(grassPref, _position, Quaternion.identity);
+            Instantiate(grassPref, _position, Quaternion.identity, environmentStorage.transform);
         }
     }
 }

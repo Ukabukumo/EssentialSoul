@@ -62,7 +62,7 @@ public class BattleManager : MonoBehaviour
     public void BattleInit()
     {
         // Установка текущего этапа боя
-        battleStage = 2;
+        battleStage = 1;
 
         // Получение здоровья игрока
         playerHealth = player.GetComponent<Player>().GetHealth();
@@ -218,7 +218,10 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "ITEMS"
     private void ItemsButtonAct()
     {
-        Debug.Log("Items");
+        // Активация окна предметов
+        GetComponent<ItemsMenuManager>().ItemsMenuInit();
+
+        battleBG.SetActive(false);
     }
 
     // Действие при нажатие кнопки "LEAVE"
@@ -241,6 +244,12 @@ public class BattleManager : MonoBehaviour
                 " DAMAGE!";
 
             enemy.health = mgm.GetComponent<Attack>().GetEnemyHealth();
+
+            // Убираем отрицательное здоровье при выводе информации
+            if (enemy.health < 0)
+            {
+                enemy.health = 0;
+            }
 
             battleStage = 2;
         }
@@ -270,16 +279,12 @@ public class BattleManager : MonoBehaviour
         // Условие победы
         if (enemy.health <= 0)
         {
-            //ExitBattle();
-            //StartCoroutine("ExitBattle");
             StartCoroutine("ExitConfirm");
         }
 
         // Условие проигрыша
         else if (playerHealth <= 0)
         {
-            //ExitBattle();
-            //StartCoroutine("ExitBattle");
             ClearScene();
             GetComponent<MainMenuManager>().MainMenuInit();
         }

@@ -17,8 +17,6 @@ public class MainMenuManager : MonoBehaviour
         // Добавление слушателей на кнопки
         startButton.onClick.AddListener(StartButtonAct);
         exitButton.onClick.AddListener(ExitButtonAct);
-
-        MainMenuInit();
     }
 
     // Инициализация меню
