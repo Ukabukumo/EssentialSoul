@@ -6,6 +6,8 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private GameObject forestLocationPref;
     [SerializeField] private GameObject treePref;
     [SerializeField] private GameObject grassPref;
+    [SerializeField] private GameObject redFlowerPref;
+    [SerializeField] private GameObject blueFlowerPref;
     private GameObject currentLocation;
     private GameObject environmentStorage;
     private GameObject player;
@@ -31,6 +33,7 @@ public class WorldManager : MonoBehaviour
         // Генерация окружения
         GenTrees(20);
         GenGrass(400);
+        GenFlowers(5);
     }
 
     // Очищаем все места в массиве
@@ -178,8 +181,59 @@ public class WorldManager : MonoBehaviour
             // Позиция травы
             Vector3 _position = new Vector3(_x, _y, _z);
 
-            // Создаём дерево в полученной позиции
+            // Создаём траву в полученной позиции
             Instantiate(grassPref, _position, Quaternion.identity, environmentStorage.transform);
         }
     }
+
+    // Генерация цветов
+    private void GenFlowers(int _n)
+    {
+        // Массив доступных координат
+        int[,] _available = new int[heightF * widthF, 2];
+
+        // Количество доступных мест
+        int _nSpot = 0;
+
+        // Ищем все свободные места
+        for (int y = 0; y < heightF; y++)
+        {
+            for (int x = 0; x < widthF; x++)
+            {
+                if (places[y, x] != 2)
+                {
+                    _available[_nSpot, 0] = x;
+                    _available[_nSpot, 1] = y;
+                    _nSpot++;
+                }
+            }
+        }
+
+        for (int i = 1; i <= _n; i++)
+        {
+            // Выбираем случайное свободное место
+            int _randPos = UnityEngine.Random.Range(0, _nSpot);
+            float _x = _available[_randPos, 0] - halfWidthF;
+            float _y = _available[_randPos, 1] - halfHeightF;
+
+            // Уровень фона
+            float _z = -1f + (_y - halfHeightF) / 100f + 0.006f;
+
+            // Позиция травы
+            Vector3 _position = new Vector3(_x, _y, _z);
+
+            // Создаём случайный цветок в полученной позиции
+            int _rand = UnityEngine.Random.Range(0, 2);
+
+            if (_rand == 0)
+            {
+                Instantiate(redFlowerPref, _position, Quaternion.identity, environmentStorage.transform);
+            }
+
+            else
+            {
+                Instantiate(blueFlowerPref, _position, Quaternion.identity, environmentStorage.transform);
+            }
+        }
+    }    
 }

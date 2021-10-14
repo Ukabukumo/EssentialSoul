@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System.Collections;
+using TMPro;
+using System;
 
 public class ItemsMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject itemsUI;
+    [SerializeField] private GameObject items;
+    [SerializeField] private GameObject textField;
+    [SerializeField] private Sprite redFlower;
+    [SerializeField] private Sprite blueFlower;
     private EventSystem eventSystem;
+    private int[] inventory;
 
     private void Start()
     {
@@ -13,8 +21,10 @@ public class ItemsMenuManager : MonoBehaviour
     }
 
     // Инициализация меню
-    public void ItemsMenuInit()
+    public void ItemsMenuInit(int[] _inventory)
     {
+        inventory = _inventory;
+
         WindowInit();
     }
 
@@ -26,8 +36,30 @@ public class ItemsMenuManager : MonoBehaviour
 
         // Подсветка первого предмета в меню
         eventSystem.SetSelectedGameObject(null);
-        Transform _items = itemsUI.transform.GetChild(0).transform.GetChild(0);
-        eventSystem.SetSelectedGameObject(_items.GetChild(0).gameObject);
+        eventSystem.SetSelectedGameObject(items.transform.GetChild(0).gameObject);
+
+        for (int i = 0; i < 16; i++)
+        {
+            GameObject _item = items.transform.GetChild(i).gameObject;
+
+            // Красный цветок
+            if (inventory[i] == 1)
+            {
+                _item.GetComponent<Image>().sprite = redFlower;
+            }
+
+            // Синий цветок
+            else if (inventory[i] == 2)
+            {
+                _item.GetComponent<Image>().sprite = blueFlower;
+            }
+
+            // Пустая ячейка
+            else
+            {
+                _item.GetComponent<Image>().sprite = null;
+            }
+        }
 
         StartCoroutine(Act());
     }
@@ -38,6 +70,9 @@ public class ItemsMenuManager : MonoBehaviour
         while (!Input.GetKey(KeyCode.Escape))
         {
             yield return new WaitForFixedUpdate();
+            
+            // Вывод информации о выбранном предмете
+            ItemInfo(Convert.ToInt32(eventSystem.currentSelectedGameObject.name) - 1);
         }
 
         // Деактивация окна предметов
@@ -45,5 +80,26 @@ public class ItemsMenuManager : MonoBehaviour
 
         // Активация окна боя
         GetComponent<BattleManager>().WindowInit();
+    }
+
+    // Информация о предмете
+    private void ItemInfo(int _i)
+    {
+        // Красный цветок
+        if (inventory[_i] == 1)
+        {
+            textField.GetComponent<TextMeshProUGUI>().text = "Red Flower";
+        }
+
+        // Синий цветок
+        else if (inventory[_i] == 2)
+        {
+            textField.GetComponent<TextMeshProUGUI>().text = "Blue Flower";
+        }
+
+        else
+        {
+            textField.GetComponent<TextMeshProUGUI>().text = "EMPTY";
+        }
     }
 }

@@ -10,10 +10,18 @@ public class Player : MonoBehaviour
     private int health = 5;
     private int damage = 1;
     private bool isMove;
+    private int[] inventory;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
+        
+        // Создаём и очищаем инвентарь
+        inventory = new int[16];
+        for (int i = 0; i < 16; i++)
+        {
+            inventory[i] = 0;
+        }
     }
 
     private void FixedUpdate()
@@ -65,6 +73,20 @@ public class Player : MonoBehaviour
 
         // Расстояние, пройденное игроком
         distance += (float)Math.Round(movement.sqrMagnitude, 3);
+    }
+
+    // Взаимодействие игрока
+    private bool Interaction()
+    {
+        if (Input.GetKey(KeyCode.RightShift))
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
     }
 
     // Проверка пересечения границы локации
@@ -144,6 +166,28 @@ public class Player : MonoBehaviour
                 collision.GetComponent<Animator>().SetBool("Touch", false);
             }
         }
+
+        // Проверка соприкосновения с красным цветком
+        if (collision.tag == "RedFlower")
+        {
+            if (Interaction())
+            {
+                Destroy(collision.gameObject);
+
+                SetInventory(1);
+            }
+        }
+
+        // Проверка соприкосновения с синим цветком
+        if (collision.tag == "BlueFlower")
+        {
+            if (Interaction())
+            {
+                Destroy(collision.gameObject);
+
+                SetInventory(2);
+            }
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -152,6 +196,25 @@ public class Player : MonoBehaviour
         if (collision.tag == "Grass")
         {
             collision.GetComponent<Animator>().SetBool("Touch", false);
+        }
+    }
+
+    // Получение инвенторя игрока
+    public int[] GetInventory()
+    {
+        return inventory;
+    }
+
+    // Добавление предмета в инвентарь
+    public void SetInventory(int _item)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            if (inventory[i] == 0)
+            {
+                inventory[i] = _item;
+                return;
+            }
         }
     }
 }

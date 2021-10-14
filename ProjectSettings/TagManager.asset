@@ -10,6 +10,8 @@ TagManager:
   - Sword
   - Spell
   - Grass
+  - RedFlower
+  - BlueFlower
   layers:
   - Default
   - TransparentFX

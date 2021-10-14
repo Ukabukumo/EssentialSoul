@@ -219,7 +219,7 @@ public class BattleManager : MonoBehaviour
     private void ItemsButtonAct()
     {
         // Активация окна предметов
-        GetComponent<ItemsMenuManager>().ItemsMenuInit();
+        GetComponent<ItemsMenuManager>().ItemsMenuInit(player.GetComponent<Player>().GetInventory());
 
         battleBG.SetActive(false);
     }
