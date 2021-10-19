@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
     private int damage = 1;
     private bool isMove;
     private int[] inventory;
+    private bool canInteract = true;
 
     private void Start()
     {
@@ -33,6 +35,15 @@ public class Player : MonoBehaviour
     // Передвижение игрока
     private void Movement()
     {
+        if (speed <= 0f)
+        {
+            animator.SetFloat("Vertical", 0f);
+            animator.SetFloat("Horizontal", 0f);
+            animator.SetTrigger("stop");
+
+            return;
+        }
+
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
         float moveVertical = Input.GetAxisRaw("Vertical");
 
@@ -59,7 +70,7 @@ public class Player : MonoBehaviour
         }
 
         // Условие, что игрок неподвижен
-        else if (moveVertical == 0f && moveHorizontal == 0f)
+        else if ( (moveVertical == 0f && moveHorizontal == 0f))
         {
             animator.SetTrigger("stop");
             isMove = false;
@@ -78,8 +89,9 @@ public class Player : MonoBehaviour
     // Взаимодействие игрока
     private bool Interaction()
     {
-        if (Input.GetKey(KeyCode.RightShift))
+        if (Input.GetKey(KeyCode.RightShift) && canInteract)
         {
+            StartCoroutine(CollectItem(1f));
             return true;
         }
 
@@ -151,6 +163,12 @@ public class Player : MonoBehaviour
         return maxHealth;
     }
 
+    // Передача здоровья игроку
+    public void SetHealth(int _health)
+    {
+        health = _health;
+    }    
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         // Проверка соприкосновения с травой при движении
@@ -174,7 +192,7 @@ public class Player : MonoBehaviour
             {
                 Destroy(collision.gameObject);
 
-                SetInventory(1);
+                AddItem(1);
             }
         }
 
@@ -185,7 +203,7 @@ public class Player : MonoBehaviour
             {
                 Destroy(collision.gameObject);
 
-                SetInventory(2);
+                AddItem(2);
             }
         }
     }
@@ -205,8 +223,13 @@ public class Player : MonoBehaviour
         return inventory;
     }
 
+    public void SetInventory(int[] _inventory)
+    {
+        inventory = _inventory;
+    }
+
     // Добавление предмета в инвентарь
-    public void SetInventory(int _item)
+    public void AddItem(int _item)
     {
         for (int i = 0; i < 16; i++)
         {
@@ -216,5 +239,20 @@ public class Player : MonoBehaviour
                 return;
             }
         }
+    }
+
+    // Задержка поднятия предмета
+    private IEnumerator CollectItem(float _time)
+    {
+        // Останавливаем игрока
+        float _speed = speed;
+        speed = 0f;
+
+        canInteract = false;
+
+        yield return new WaitForSeconds(_time);
+        
+        canInteract = true;
+        speed = _speed;
     }
 }

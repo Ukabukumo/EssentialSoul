@@ -11,10 +11,10 @@ public class WorldManager : MonoBehaviour
     private GameObject currentLocation;
     private GameObject environmentStorage;
     private GameObject player;
-    private const int widthF = 41;        // Ширина поля
-    private const int heightF = 41;       // Высота поля
-    private const int halfWidthF = 20;    // Половина ширины поля
-    private const int halfHeightF = 20;   // Половина высоты поля
+    private const int widthF = 37;        // Ширина поля
+    private const int heightF = 37;       // Высота поля
+    private const int halfWidthF = 18;    // Половина ширины поля
+    private const int halfHeightF = 18;   // Половина высоты поля
     private int[,] places;                // Массив мест объектов
 
     // Создание локации
@@ -33,7 +33,7 @@ public class WorldManager : MonoBehaviour
         // Генерация окружения
         GenTrees(20);
         GenGrass(400);
-        GenFlowers(5);
+        GenFlowers(10);
     }
 
     // Очищаем все места в массиве
@@ -86,7 +86,8 @@ public class WorldManager : MonoBehaviour
         int[,] _available = new int[heightF * widthF, 2];
 
         // Занятое расстояние вокруг дерева
-        int _radius = 6;
+        int _radius1 = 6;
+        int _radius2 = 3;
 
         for (int i = 1; i <= _n; i++)
         {
@@ -121,10 +122,10 @@ public class WorldManager : MonoBehaviour
             // Уровень фона
             float _z = -1f + (_y - halfHeightF - 2f) / 100f - 0.01f;
 
-            // Обозначаем места вокруг дерева
-            for (int y = _available[_randPos, 1] - _radius; y <= _available[_randPos, 1] + _radius; y++)
+            // Обозначаем места, недоступные для деревьев 
+            for (int y = _available[_randPos, 1] - _radius1; y <= _available[_randPos, 1] + _radius1; y++)
             {
-                for (int x = _available[_randPos, 0] - _radius; x <= _available[_randPos, 0] + _radius; x++)
+                for (int x = _available[_randPos, 0] - _radius1; x <= _available[_randPos, 0] + _radius1; x++)
                 {
                     // Проверка нахождения в границах массива
                     if (y >= 0 && y < heightF && x >= 0 && x < widthF)
@@ -134,8 +135,21 @@ public class WorldManager : MonoBehaviour
                 }
             }
 
+            // Обозначаем места, недоступные для прочих объектов
+            for (int y = _available[_randPos, 1] - _radius2; y <= _available[_randPos, 1] + _radius2; y++)
+            {
+                for (int x = _available[_randPos, 0] - _radius2; x <= _available[_randPos, 0] + _radius2; x++)
+                {
+                    // Проверка нахождения в границах массива
+                    if (y >= 0 && y < heightF && x >= 0 && x < widthF)
+                    {
+                        places[y, x] = 2;
+                    }
+                }
+            }
+
             // Обозначаем место дерева
-            places[_available[_randPos, 1], _available[_randPos, 0]] = 2;
+            places[_available[_randPos, 1], _available[_randPos, 0]] = 3;
 
             // Позиция дерева
             Vector3 _position = new Vector3(_x, _y, _z);
@@ -159,7 +173,7 @@ public class WorldManager : MonoBehaviour
         {
             for (int x = 0; x < widthF; x++)
             {
-                if (places[y, x] != 2)
+                if ( (places[y, x] != 2) && (places[y, x] != 3) )
                 {
                     _available[_nSpot, 0] = x;
                     _available[_nSpot, 1] = y;
@@ -176,7 +190,7 @@ public class WorldManager : MonoBehaviour
             float _y = _available[_randPos, 1] - halfHeightF;
 
             // Уровень фона
-            float _z = -1f + (_y - halfHeightF) / 100f + 0.006f;
+            float _z = -1f + (_y - halfHeightF) / 100f - 0.014f;
 
             // Позиция травы
             Vector3 _position = new Vector3(_x, _y, _z);
@@ -200,7 +214,7 @@ public class WorldManager : MonoBehaviour
         {
             for (int x = 0; x < widthF; x++)
             {
-                if (places[y, x] != 2)
+                if ( (places[y, x] != 2) && (places[y, x] != 3) )
                 {
                     _available[_nSpot, 0] = x;
                     _available[_nSpot, 1] = y;
@@ -217,7 +231,7 @@ public class WorldManager : MonoBehaviour
             float _y = _available[_randPos, 1] - halfHeightF;
 
             // Уровень фона
-            float _z = -1f + (_y - halfHeightF) / 100f + 0.006f;
+            float _z = -1f + (_y - halfHeightF) / 100f - 0.014f;
 
             // Позиция травы
             Vector3 _position = new Vector3(_x, _y, _z);

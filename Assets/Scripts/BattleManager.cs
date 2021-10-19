@@ -108,7 +108,7 @@ public class BattleManager : MonoBehaviour
 
         // Индикатор здоровья игрока
         playerHealthInfo.GetComponent<TextMeshProUGUI>().text = 
-            Convert.ToString(playerMaxHealth + " / " + playerHealth);
+            Convert.ToString(playerHealth + " / " + playerMaxHealth);
 
         // Индикатор времени на текущий этап боя
         timeInfo.GetComponent<TextMeshProUGUI>().text = "TIME: " + Convert.ToString(battleTime);
@@ -219,7 +219,7 @@ public class BattleManager : MonoBehaviour
     private void ItemsButtonAct()
     {
         // Активация окна предметов
-        GetComponent<ItemsMenuManager>().ItemsMenuInit(player.GetComponent<Player>().GetInventory());
+        GetComponent<ItemsMenuManager>().ItemsMenuInit();
 
         battleBG.SetActive(false);
     }
@@ -239,7 +239,7 @@ public class BattleManager : MonoBehaviour
             yield return new WaitWhile(() => !mgm.GetComponent<Attack>().IsEnd());
 
             // Вывод нанесённого урона
-            battleInfo.GetComponent<TextMeshProUGUI>().text = "YOU DEALTH " + 
+            battleInfo.GetComponent<TextMeshProUGUI>().text = "YOU DEALT " + 
                 Convert.ToString(enemy.health - mgm.GetComponent<Attack>().GetEnemyHealth()) +
                 " DAMAGE!";
 
@@ -269,6 +269,9 @@ public class BattleManager : MonoBehaviour
             battleStage = 1;
         }
 
+        // Установка начального времени на миниигру
+        battleTime = 10f;
+
         WindowInit();
         CheckEndBattle();
     }
@@ -285,12 +288,12 @@ public class BattleManager : MonoBehaviour
         // Условие проигрыша
         else if (playerHealth <= 0)
         {
-            ClearScene();
+            ExitBattle();
             GetComponent<MainMenuManager>().MainMenuInit();
         }
     }
 
-    // Закрытие окна битвы
+    // Завершение битвы
     private void ExitBattle()
     {
         // Убираем меню битвы
@@ -301,6 +304,9 @@ public class BattleManager : MonoBehaviour
 
         // Передача управления игроку
         player.SetActive(true);
+
+        // Передача здоровья игроку
+        player.GetComponent<Player>().SetHealth(playerHealth);
     }
 
     // Действия перед закрытием окна
@@ -325,20 +331,48 @@ public class BattleManager : MonoBehaviour
         itemsButton.gameObject.SetActive(true);
         leaveButton.gameObject.SetActive(true);
 
-        // Очищаем сцену
-        ClearScene();
+        // Завершаем битву
+        ExitBattle();
     }
 
-    // Очистка окна битвы
-    private void ClearScene()
+    // Изменение здоровья игрока
+    public void SetHealth(int _health)
     {
-        // Убираем меню битвы
-        battleBG.SetActive(false);
+        playerHealth += _health;
 
-        // Убираем вторую камеру
-        miniGameCamera.SetActive(false);
+        // Проверка, чтобы здоровье не превосходило максимальное
+        if (playerHealth > playerMaxHealth)
+        {
+            playerHealth = playerMaxHealth;
+        }
+    }
 
-        // Передача управления игроку
-        player.SetActive(true);
+    // Изменение времени на миниигру
+    public void ChangeBattleTime(float _time)
+    {
+        battleTime += _time;
+
+        // Если время на миниигру закончилось
+        if (battleTime <= 0)
+        {
+            // Смена этапа битвы
+            if (battleStage == 1)
+            {
+                battleStage = 2;
+            }
+
+            else if (battleStage == 2)
+            {
+                battleStage = 1;
+            }
+
+            battleTime = 10f;
+        }
+    }
+
+    // Получение текущего этапа битвы
+    public int GetBattleStage()
+    {
+        return battleStage;
     }
 }
