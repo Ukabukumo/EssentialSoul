@@ -128,20 +128,7 @@ public class ItemsMenuManager : MonoBehaviour
                 eventSystem.currentSelectedGameObject.GetComponent<Image>().sprite = null;
 
                 // Изменение времени на миниигру
-                int _battleStage = GetComponent<BattleManager>().GetBattleStage();
-
-                // Если этап атаки
-                if (_battleStage == 1)
-                {
-                    GetComponent<BattleManager>().ChangeBattleTime(-5f);
-                }
-                
-                // Если этап защиты
-                else if (_battleStage == 2)
-                {
-                    GetComponent<BattleManager>().ChangeBattleTime(5f);
-                }
-
+                GetComponent<BattleManager>().ChangeBattleTime(5f);
                 break;
 
             // Синий цветок
@@ -155,7 +142,7 @@ public class ItemsMenuManager : MonoBehaviour
                 eventSystem.currentSelectedGameObject.GetComponent<Image>().sprite = null;
 
                 // Изменение времени на миниигру
-                GetComponent<BattleManager>().ChangeBattleTime(-5f);
+                GetComponent<BattleManager>().ChangeBattleTime(8f);
                 break;
 
             // Пусто

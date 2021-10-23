@@ -71,7 +71,7 @@ public class BattleManager : MonoBehaviour
         playerMaxHealth = player.GetComponent<Player>().GetMaxHealth();
 
         // Остановка игрока
-        player.SetActive(false);
+        player.GetComponent<Player>().StopPlayer();
         miniGameCamera.SetActive(true);
 
         // Вывод информации о начале боя
@@ -350,7 +350,15 @@ public class BattleManager : MonoBehaviour
     // Изменение времени на миниигру
     public void ChangeBattleTime(float _time)
     {
-        battleTime += _time;
+        if (battleStage == 1)
+        {
+            battleTime -= _time;
+        }
+
+        else if (battleStage == 2)
+        {
+            battleTime += _time;
+        }
 
         // Если время на миниигру закончилось
         if (battleTime <= 0)

@@ -5,6 +5,8 @@ using System.Collections;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
+    [SerializeField] private GameObject collectIconPref;
+    [SerializeField] private GameObject gameManager;
     private Animator animator;
     private float distance = 0f;
     private int maxHealth = 5;
@@ -12,7 +14,10 @@ public class Player : MonoBehaviour
     private int damage = 1;
     private bool isMove;
     private int[] inventory;
-    private bool canInteract = true;
+    private bool canCollect = true;
+    private float collectDelay = 0.5f;
+    private GameObject collectIcon;
+    private GameObject currentItem;
 
     private void Start()
     {
@@ -29,13 +34,14 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         Movement();
+        PlayerAct();
         BorderCrossing();
     }
 
     // Передвижение игрока
     private void Movement()
     {
-        if (speed <= 0f)
+        if (!canCollect)
         {
             animator.SetFloat("Vertical", 0f);
             animator.SetFloat("Horizontal", 0f);
@@ -87,11 +93,11 @@ public class Player : MonoBehaviour
     }
 
     // Взаимодействие игрока
-    private bool Interaction()
+    private bool CollectItem()
     {
-        if (Input.GetKey(KeyCode.RightShift) && canInteract)
+        if (Input.GetKey(KeyCode.RightShift) && canCollect)
         {
-            StartCoroutine(CollectItem(1f));
+            StartCoroutine(CollectItem(collectDelay));
             return true;
         }
 
@@ -131,6 +137,17 @@ public class Player : MonoBehaviour
 
         // Иллюзия перехода
         transform.position = new Vector3(_x, _y, transform.position.z);
+    }
+
+    // Действия игрока
+    private void PlayerAct()
+    {
+        // Клавиша открытия меню навыков
+        if (Input.GetKey(KeyCode.C))
+        {
+            gameManager.GetComponent<SkillsMenuManager>().SkillsMenuInit();
+            gameObject.SetActive(false);
+        }
     }
 
     // Получение пройденной дистанции
@@ -188,10 +205,9 @@ public class Player : MonoBehaviour
         // Проверка соприкосновения с красным цветком
         if (collision.tag == "RedFlower")
         {
-            if (Interaction())
+            if (CollectItem())
             {
-                Destroy(collision.gameObject);
-
+                currentItem = collision.gameObject;
                 AddItem(1);
             }
         }
@@ -199,10 +215,9 @@ public class Player : MonoBehaviour
         // Проверка соприкосновения с синим цветком
         if (collision.tag == "BlueFlower")
         {
-            if (Interaction())
+            if (CollectItem())
             {
-                Destroy(collision.gameObject);
-
+                currentItem = collision.gameObject;
                 AddItem(2);
             }
         }
@@ -223,6 +238,7 @@ public class Player : MonoBehaviour
         return inventory;
     }
 
+    // Передача инвентаря игроку
     public void SetInventory(int[] _inventory)
     {
         inventory = _inventory;
@@ -231,6 +247,7 @@ public class Player : MonoBehaviour
     // Добавление предмета в инвентарь
     public void AddItem(int _item)
     {
+        // Ищем первую пустую ячейку
         for (int i = 0; i < 16; i++)
         {
             if (inventory[i] == 0)
@@ -244,15 +261,34 @@ public class Player : MonoBehaviour
     // Задержка поднятия предмета
     private IEnumerator CollectItem(float _time)
     {
-        // Останавливаем игрока
-        float _speed = speed;
-        speed = 0f;
+        // Запрещаем игроку подбирать предметы
+        canCollect = false;
 
-        canInteract = false;
+        // Появление иконки подбирания объекта
+        Vector3 _collectIconPos = transform.position + new Vector3(0f, 0f, -1f);
+        collectIcon = Instantiate(collectIconPref, _collectIconPos, Quaternion.identity);
 
         yield return new WaitForSeconds(_time);
-        
-        canInteract = true;
-        speed = _speed;
+
+        Destroy(collectIcon);
+        Destroy(currentItem);
+        canCollect = true;
+    }
+
+    public void StopPlayer()
+    {
+        if (collectIcon != null)
+        {
+            Destroy(collectIcon);
+        }
+
+        if (currentItem != null)
+        {
+            Destroy(currentItem);
+        }
+
+        canCollect = true;
+
+        gameObject.SetActive(false);
     }
 }
