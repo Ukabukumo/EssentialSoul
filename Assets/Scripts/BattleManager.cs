@@ -108,10 +108,10 @@ public class BattleManager : MonoBehaviour
 
         // Индикатор здоровья игрока
         playerHealthInfo.GetComponent<TextMeshProUGUI>().text = 
-            Convert.ToString(playerHealth + " / " + playerMaxHealth);
+            Convert.ToString(playerHealth + "/" + playerMaxHealth);
 
         // Индикатор времени на текущий этап боя
-        timeInfo.GetComponent<TextMeshProUGUI>().text = "TIME: " + Convert.ToString(battleTime);
+        timeInfo.GetComponent<TextMeshProUGUI>().text = Convert.ToString(battleTime);
 
         // Если этап атаки
         if (battleStage == 1)
@@ -149,11 +149,11 @@ public class BattleManager : MonoBehaviour
         {
             // Простой воин
             case 0:
-                enemy.health = 20;
+                enemy.health = 200;
                 enemy.nArmor = 5;
 
                 enemy.swordAttack.active = true;
-                enemy.swordAttack.power = 1;
+                enemy.swordAttack.power = 10;
                 enemy.swordAttack.speed = 3f;
                 enemy.swordAttack.frequency = 1f;
 
@@ -161,12 +161,12 @@ public class BattleManager : MonoBehaviour
 
             // Простой лучник
             case 1:
-                enemy.health = 15;
+                enemy.health = 150;
                 enemy.nArmor = 2;
                 enemy.inverseMove = true;
 
                 enemy.arrowAttack.active = true;
-                enemy.arrowAttack.power = 1;
+                enemy.arrowAttack.power = 10;
                 enemy.arrowAttack.speed = 6f;
                 enemy.arrowAttack.frequency = 0.5f;
                 
@@ -174,12 +174,12 @@ public class BattleManager : MonoBehaviour
 
             // Простой заклинатель
             case 2:
-                enemy.health = 10;
+                enemy.health = 100;
                 enemy.nArmor = 2;
                 enemy.nFalseAim = 2;
 
                 enemy.spellAttack.active = true;
-                enemy.spellAttack.power = 1;
+                enemy.spellAttack.power = 10;
                 enemy.spellAttack.lifetime = 5f;
                 enemy.spellAttack.frequency = 0.3f;
                 enemy.spellAttack.distance = 1f;
@@ -199,7 +199,8 @@ public class BattleManager : MonoBehaviour
     {
         // Инициализация миниигры атака
         mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), 
-            enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove, miniGameUI);
+            enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove, miniGameUI, 
+            player.GetComponent<Player>().GetAimSpeed());
 
         battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");
@@ -209,7 +210,8 @@ public class BattleManager : MonoBehaviour
     private void DefenseButtonAct()
     {
         // Инициализация миниигры защита
-        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy, miniGameUI);
+        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy, miniGameUI, 
+            player.GetComponent<Player>().GetMiniPlayerSpeed());
 
         battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");
@@ -314,6 +316,9 @@ public class BattleManager : MonoBehaviour
     {
         // Вывод подсказки об окончании битвы
         battleInfo.GetComponent<TextMeshProUGUI>().text = "## YOU WIN! \n## Press ENTER to exit!";
+
+        // Добавление души за победу
+        player.GetComponent<Player>().AddSouls(1);
 
         // Убираем кнопки
         attackButton.gameObject.SetActive(false);

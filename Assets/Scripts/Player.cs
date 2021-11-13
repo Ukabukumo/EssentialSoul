@@ -4,20 +4,28 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
     [SerializeField] private GameObject collectIconPref;
     [SerializeField] private GameObject gameManager;
+    [SerializeField] private float speed = 5f;  // Скорость передвижения игрока
     private Animator animator;
-    private float distance = 0f;
-    private int maxHealth = 5;
-    private int health = 5;
-    private int damage = 1;
-    private bool isMove;
-    private int[] inventory;
-    private bool canCollect = true;
-    private float collectDelay = 0.5f;
+    private float distance = 0f;         // Пройденная дистанция
+    private int maxHealth = 100;         // Максимальное здоровье игрока
+    private int health = 100;            // Здоровье игрока
+    private int damage = 10;             // Урон игрока
+    private bool isMove;                 // Состояние движения игрока
+    private int[] inventory;             // Инвентарь игрока
+    private bool canCollect = true;      // Возможность подбирать предметы
+    private float collectDelay = 0.5f;   // Время сбора предмета
     private GameObject collectIcon;
-    private GameObject currentItem;
+    private GameObject currentItem;      // Текущий предмет для сбора
+    private int souls = 40;               // Количество собраных душ
+    private float miniPlayerSpeed = 5f;  // Скорость игрока в миниигре
+    private float aimSpeed = 5f;         // Скорость прицела
+    private bool isInitiator = false;    // Особый навык "ИНИЦИАТОР"
+    private bool isCollector = false;    // Особый навык "СБОРЩИК"
+    private bool isDodger = false;       // Особый навык "ЛОВКАЧ"
+    private bool isBlessed = false;      // Особый навык "БЛАГОСЛОВЕННЫЙ"
+    private bool isShooter = false;      // Особый навык "СТРЕЛОК"
 
     private void Start()
     {
@@ -165,7 +173,15 @@ public class Player : MonoBehaviour
     // Получение урона игрока
     public int GetDamage()
     {
-        return damage;
+        if (isShooter)
+        {
+            return damage * 2;
+        }
+        
+        else
+        {
+            return damage;
+        }
     }
 
     // Получение здоровья игрока
@@ -275,6 +291,7 @@ public class Player : MonoBehaviour
         canCollect = true;
     }
 
+    // Прекращение всех действий игрока
     public void StopPlayer()
     {
         if (collectIcon != null)
@@ -290,5 +307,74 @@ public class Player : MonoBehaviour
         canCollect = true;
 
         gameObject.SetActive(false);
+    }
+
+    // Получение скорости игрока в миниигре
+    public float GetMiniPlayerSpeed()
+    {
+        return miniPlayerSpeed;
+    }
+
+    // Получение скорости прицела
+    public float GetAimSpeed()
+    {
+        return aimSpeed;
+    }
+
+    // Получение количества душ игрока
+    public int GetSouls()
+    {
+        return souls;
+    }
+
+    // Добавление душ игроку
+    public void AddSouls(int _n)
+    {
+        souls += _n;
+    }
+
+    // Добавление урона игроку
+    public void AddDamage(int _n)
+    {
+        damage += _n;
+    }
+
+    // Добавление скорости передвижения игрока в миниигре
+    public void AddMiniPlayerSpeed(float _n)
+    {
+        miniPlayerSpeed += _n;
+        miniPlayerSpeed = (float)Math.Round(miniPlayerSpeed, 1);
+    }
+
+    // Добавление скорости прицела
+    public void AddAimSpeed(float _n)
+    {
+        aimSpeed += _n;
+        aimSpeed = (float)Math.Round(aimSpeed, 1);
+    }
+
+    public void SetInitiator(bool _value)
+    {
+        isInitiator = _value;
+    }
+
+    public void SetCollector(bool _value)
+    {
+        isCollector = _value;
+    }
+
+    public void SetDodger(bool _value)
+    {
+        isDodger = _value;
+    }
+
+    public void SetBlessed(bool _value)
+    {
+        isBlessed = _value;
+    }
+
+    public void SetShooter(bool _value)
+    {
+        isShooter = _value;
     }
 }

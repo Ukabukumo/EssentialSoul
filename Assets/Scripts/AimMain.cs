@@ -1,14 +1,28 @@
 using UnityEngine;
+using System.Collections;
 
 public class AimMain : Aim
 {
-    private float speed = 5f;       // Скорость прицела
+    private float speed;            // Скорость прицела
     private bool canShoot = true;   // Возможность выстрела
 
-    private void FixedUpdate()
+    // Инициализация основного прицела
+    public void AimMainInit(float _speed)
     {
-        Movement();
-        BorderCrossing();
+        speed = _speed;
+        StartCoroutine(Act());
+    }
+
+    // Действия прицела
+    private IEnumerator Act()
+    {
+        while (true)
+        {
+            yield return new WaitForFixedUpdate();
+
+            Movement();
+            BorderCrossing();
+        }
     }
 
     // Движение правильного прицела

@@ -1,8 +1,9 @@
 using UnityEngine;
+using System.Collections;
 
 public class AimFake : Aim
 {
-    private float speed = 5f;       // Скорость прицела
+    private float speed;            // Скорость прицела
     private bool canShoot = true;   // Возможность выстрела
 
     // Ключи основных клавиш
@@ -51,11 +52,24 @@ public class AimFake : Aim
         rightKeyAlt = _keysAlt[3];
     }
 
-    private void FixedUpdate()
+    // Инициализация поддельного прицела
+    public void AimFakeInit(float _speed)
     {
-        Movement();
-        BorderCrossing();
-        Shoot();
+        speed = _speed;
+        StartCoroutine(Act());
+    }
+
+    // Действия прицела
+    private IEnumerator Act()
+    {
+        while (true)
+        {
+            yield return new WaitForFixedUpdate();
+
+            Movement();
+            BorderCrossing();
+            Shoot();
+        }
     }
 
     // Движение поддельного прицела

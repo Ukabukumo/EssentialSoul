@@ -20,10 +20,11 @@ public class Attack : MonoBehaviour
     private int nArmor;
     private int nFakeAim;
     private bool inverseMove;
+    private float aimSpeed;
 
     // Инициализация миниигры атака
     public void AttackInit(float _attackTime, int _playerDamage, int _enemyHealth, 
-        int _nArmor, int _nFakeAim, bool _inverseMove, GameObject _miniGameUI)
+        int _nArmor, int _nFakeAim, bool _inverseMove, GameObject _miniGameUI, float _aimSpeed)
     {
         // Условные сектора окружности для размещения прицелов
         sectors = new int[36];
@@ -39,6 +40,7 @@ public class Attack : MonoBehaviour
         nFakeAim = _nFakeAim;
         inverseMove = _inverseMove;
         miniGameUI = _miniGameUI;
+        aimSpeed = _aimSpeed;
 
         // Хранилище для объектов сцены
         storage = new GameObject("Storage");
@@ -62,6 +64,7 @@ public class Attack : MonoBehaviour
         float _aimX = 4f * Mathf.Cos(_radian);
         float _aimY = 4f * Mathf.Sin(_radian);
         aim = Instantiate(aimMainPref, new Vector3(_aimX, _aimY, -12f), Quaternion.identity, storage.transform);
+        aim.GetComponent<AimMain>().AimMainInit(aimSpeed);
 
         // Создание цели
         Instantiate(targetPref, new Vector3(0, 0, -11f), Quaternion.identity, storage.transform);
@@ -182,7 +185,8 @@ public class Attack : MonoBehaviour
             _radian = _angle * Mathf.PI / 180f;
             _x = 4f * Mathf.Cos(_radian);
             _y = 4f * Mathf.Sin(_radian);
-            Instantiate(aimFakePref, new Vector3(_x, _y, -12f), Quaternion.identity, storage.transform);
+            GameObject _aimFake = Instantiate(aimFakePref, new Vector3(_x, _y, -12f), Quaternion.identity, storage.transform);
+            _aimFake.GetComponent<AimFake>().AimFakeInit(aimSpeed);
         }
     }
 

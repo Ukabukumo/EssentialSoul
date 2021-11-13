@@ -4,17 +4,18 @@ using System.Collections;
 public class MiniPlayer : MonoBehaviour
 {
     private int health;         // «доровье игрока
-    private float speed = 5f;   // —корость игрока
+    private float speed;        // —корость игрока
     private float cooldown;     // ¬рем€ неу€звимости после получени€ урона
     private Enemy enemy;        // ’арактеристики противника
     private bool attackable;    // ‘лаг у€звимости игрока
     private Animator animator;
 
     // »нициализаци€ игрока
-    public void MiniPlayerInit(int _health, Enemy _enemy)
+    public void MiniPlayerInit(int _health, Enemy _enemy, float _speed)
     {
         health = _health;
         enemy = _enemy;
+        speed = _speed;
 
         attackable = true;
         cooldown = 1f;
