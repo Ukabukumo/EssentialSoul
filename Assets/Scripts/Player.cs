@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     private float collectDelay = 0.5f;   // Время сбора предмета
     private GameObject collectIcon;
     private GameObject currentItem;      // Текущий предмет для сбора
-    private int souls = 40;               // Количество собраных душ
+    private int souls = 0;               // Количество собраных душ
     private float miniPlayerSpeed = 5f;  // Скорость игрока в миниигре
     private float aimSpeed = 5f;         // Скорость прицела
     private bool isInitiator = false;    // Особый навык "ИНИЦИАТОР"
@@ -269,7 +269,21 @@ public class Player : MonoBehaviour
             if (inventory[i] == 0)
             {
                 inventory[i] = _item;
-                return;
+                break;
+            }
+        }
+
+        // Если активен особый навык "СБОРЩИК", то дублируем предмет
+        if (isCollector)
+        {
+            // Ищем первую пустую ячейку
+            for (int i = 0; i < 16; i++)
+            {
+                if (inventory[i] == 0)
+                {
+                    inventory[i] = _item;
+                    break;
+                }
             }
         }
     }
@@ -376,5 +390,20 @@ public class Player : MonoBehaviour
     public void SetShooter(bool _value)
     {
         isShooter = _value;
+    }
+
+    public bool GetInitiator()
+    {
+        return isInitiator;
+    }
+
+    public bool GetDodger()
+    {
+        return isDodger;
+    }
+
+    public bool GetBlessed()
+    {
+        return isBlessed;
     }
 }

@@ -62,7 +62,36 @@ public class BattleManager : MonoBehaviour
     public void BattleInit()
     {
         // Установка текущего этапа боя
-        battleStage = 1;
+        // Если есть особый навык "ИНИЦИАТОР"
+        if (player.GetComponent<Player>().GetInitiator())
+        {
+            // Устанавливаем этап битвы - атака
+            battleStage = 1;
+        }
+        
+        else
+        {
+            // Случайно генерируем этап боя
+            int _n = UnityEngine.Random.Range(0, 2);
+            
+            switch (_n)
+            {
+                // Сгенерирован этап атаки
+                case 0:
+                    battleStage = 1;
+                    break;
+
+                // Сгенерирован этап защиты
+                case 1:
+                    battleStage = 2;
+                    break;
+
+                // По-умолчанию этап атаки
+                default:
+                    battleStage = 1;
+                    break;
+            }
+        }
 
         // Получение здоровья игрока
         playerHealth = player.GetComponent<Player>().GetHealth();
@@ -142,10 +171,10 @@ public class BattleManager : MonoBehaviour
     private void CreateEnemy()
     {
         // Генерация типа противника по характеристикам
-        int n = UnityEngine.Random.Range(0, 3);
+        int _n = UnityEngine.Random.Range(0, 3);
         enemy = new Enemy();
 
-        switch (n)
+        switch (_n)
         {
             // Простой воин
             case 0:
@@ -209,9 +238,10 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "DEFENSE"
     private void DefenseButtonAct()
     {
+        Player _player = player.GetComponent<Player>();
         // Инициализация миниигры защита
         mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy, miniGameUI, 
-            player.GetComponent<Player>().GetMiniPlayerSpeed());
+            _player.GetMiniPlayerSpeed(), _player.GetDodger(), _player.GetBlessed());
 
         battleBG.SetActive(false);
         StartCoroutine("CheckEndMinigame");

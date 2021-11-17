@@ -20,7 +20,8 @@ public class Defense : MonoBehaviour
     private float miniPlayerSpeed;
 
     // Инициализация миниигры защита
-    public void DefenseInit(float _defenseTime, int _playerHealth, Enemy _enemy, GameObject _miniGameUI, float _miniPlayerSpeed)
+    public void DefenseInit(float _defenseTime, int _playerHealth, 
+        Enemy _enemy, GameObject _miniGameUI, float _miniPlayerSpeed, bool _isDodger, bool _isBlessed)
     {
         defenseTime = _defenseTime;
         playerHealth = _playerHealth;
@@ -38,8 +39,10 @@ public class Defense : MonoBehaviour
         miniGameUI.SetActive(true);
 
         // Создание игрока в миниигре
-        miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -11f), Quaternion.identity, storage.transform);
-        miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(playerHealth, enemy, miniPlayerSpeed);
+        miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -11f), 
+            Quaternion.identity, storage.transform);
+        miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(playerHealth, enemy, 
+            miniPlayerSpeed, _isDodger, _isBlessed);
 
         StartCoroutine("DefenseTimer");
 
@@ -112,7 +115,8 @@ public class Defense : MonoBehaviour
     private IEnumerator WarningAttack(float _time, int _type, Vector3 _position, Quaternion _rotation)
     {
         // Создание предупреждающего знака
-        GameObject _warning = Instantiate(warningPref, new Vector3(_position.x, _position.y, -12f), Quaternion.identity, storage.transform);
+        GameObject _warning = Instantiate(warningPref, 
+            new Vector3(_position.x, _position.y, -12f), Quaternion.identity, storage.transform);
         
         // Время предупреждения
         yield return new WaitForSeconds(_time);

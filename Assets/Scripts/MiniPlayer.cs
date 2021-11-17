@@ -8,17 +8,31 @@ public class MiniPlayer : MonoBehaviour
     private float cooldown;     // Время неуязвимости после получения урона
     private Enemy enemy;        // Характеристики противника
     private bool attackable;    // Флаг уязвимости игрока
+    private bool isDodger;      // Особый навык "ЛОВКАЧ"
+    private bool isBlessed;     // Особый навык "БЛАГОСЛОВЕННЫЙ"
     private Animator animator;
 
     // Инициализация игрока
-    public void MiniPlayerInit(int _health, Enemy _enemy, float _speed)
+    public void MiniPlayerInit(int _health, Enemy _enemy, float _speed, bool _isDodger, bool _isBlessed)
     {
         health = _health;
         enemy = _enemy;
         speed = _speed;
+        isDodger = _isDodger;
+        isBlessed = _isBlessed;
 
         attackable = true;
-        cooldown = 1f;
+
+        // Если активен особый навык благословенный, то увеличиваем время неуязвимости
+        if (isBlessed)
+        {
+            cooldown = 2f;
+        }
+
+        else
+        {
+            cooldown = 1f;
+        }
 
         animator = GetComponent<Animator>();
 
@@ -36,15 +50,26 @@ public class MiniPlayer : MonoBehaviour
         }
     }
 
-    // Неуязвимость игрока
+    // Неуязвимость после получения урона
     private IEnumerator DamageCooldown()
     {
+        attackable = false;
         animator.SetBool("Attackable", false);
         
         yield return new WaitForSeconds(cooldown);
         
         attackable = true;
         animator.SetBool("Attackable", true);
+    }
+
+    // Неуязвимость после уклонения
+    private IEnumerator DodgeCooldown()
+    {
+        attackable = false;
+
+        yield return new WaitForSeconds(cooldown);
+
+        attackable = true;
     }
 
     // Передвижение игрока
@@ -107,41 +132,55 @@ public class MiniPlayer : MonoBehaviour
         // Если столкнулся со стрелой
         if ( (_other.tag == "Arrow") && attackable )
         {
+            if (Dodge())
+            {
+                StartCoroutine(DodgeCooldown());
+                return;
+            }
+
             if (_other.gameObject != null)
             {
                 Destroy(_other.gameObject);
             }
 
             health -= enemy.arrowAttack.power;
-            attackable = false;
-            StartCoroutine("DamageCooldown");
+            StartCoroutine(DamageCooldown());
         }
 
         // Если столкнулся с мечом
         if ( (_other.tag == "Sword") && attackable )
         {
+            if (Dodge())
+            {
+                StartCoroutine(DodgeCooldown());
+                return;
+            }
+
             if (_other.gameObject != null)
             {
                 Destroy(_other.gameObject);
             }
 
             health -= enemy.swordAttack.power;
-            attackable = false;
-            StartCoroutine("DamageCooldown");
+            StartCoroutine(DamageCooldown());
         }
 
         // Если столкнулся с заклинанием
         if ( (_other.tag == "Spell") && attackable )
         {
+            if (Dodge())
+            {
+                StartCoroutine(DodgeCooldown());
+                return;
+            }
+
             if (_other.gameObject != null)
             {
                 Destroy(_other.gameObject);
             }
 
             health -= enemy.spellAttack.power;
-
-            attackable = false;
-            StartCoroutine("DamageCooldown");
+            StartCoroutine(DamageCooldown());
         }
     }
 
@@ -149,5 +188,29 @@ public class MiniPlayer : MonoBehaviour
     public int GetHealth()
     {
         return health;
+    }
+
+    // Уклонение от атаки
+    private bool Dodge()
+    {
+        // Если активен особый навык "ЛОВКАЧ"
+        if (isDodger)
+        {
+            // Шанс увернуться 10%
+            if (Random.Range(0, 100) < 10)
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+        else
+        {
+            return false;
+        }
     }
 }
