@@ -27,8 +27,12 @@ public class Player : MonoBehaviour
     private bool isBlessed = false;      // Особый навык "БЛАГОСЛОВЕННЫЙ"
     private bool isShooter = false;      // Особый навык "СТРЕЛОК"
 
+    private Transform playerTransform;
+
     private void Start()
     {
+        playerTransform = transform;
+
         animator = GetComponent<Animator>();
         
         // Создаём и очищаем инвентарь
@@ -118,9 +122,9 @@ public class Player : MonoBehaviour
     // Проверка пересечения границы локации
     private void BorderCrossing()
     {
-        float _x = transform.position.x;
-        float _y = transform.position.y;
-        float _offset = 2f;               // Расстояние смещения при переходе через границу
+        float _x = playerTransform.position.x;
+        float _y = playerTransform.position.y;
+        float _offset = 4f;               // Расстояние смещения при переходе через границу
         float _border = 20f;              // Расстояние от центра до границы локации
 
         // Правая или левая граница локации
@@ -131,6 +135,12 @@ public class Player : MonoBehaviour
 
             // Зеркальная смена координаты (иллюзия перехода)
             _x = -_x;
+
+            // Иллюзия перехода
+            transform.position = new Vector3(_x, _y, transform.position.z);
+
+            // Создание новой локации
+            gameManager.GetComponent<WorldManager>().CreateLocation(gameObject);
         }
 
         // Верхняя или нижняя граница локации
@@ -141,10 +151,13 @@ public class Player : MonoBehaviour
 
             // Зеркальная смена координаты (иллюзия перехода)
             _y = -_y;
-        }
 
-        // Иллюзия перехода
-        transform.position = new Vector3(_x, _y, transform.position.z);
+            // Иллюзия перехода
+            transform.position = new Vector3(_x, _y, transform.position.z);
+
+            // Создание новой локации
+            gameManager.GetComponent<WorldManager>().CreateLocation(gameObject);
+        }
     }
 
     // Действия игрока

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class WorldManager : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private GameObject grassPref;
     [SerializeField] private GameObject redFlowerPref;
     [SerializeField] private GameObject blueFlowerPref;
-    private GameObject currentLocation;
     private GameObject environmentStorage;
     private GameObject player;
     private const int widthF = 37;        // Ширина поля
@@ -18,22 +18,43 @@ public class WorldManager : MonoBehaviour
     private int[,] places;                // Массив мест объектов
 
     // Создание локации
-    public void CreateLevel(GameObject _player)
+    public void CreateLocation(GameObject _player)
     {
+        // Очистка локации
+        ClearLocation();
+
         player = _player;
 
-        currentLocation = Instantiate(forestLocationPref, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        // Создание следующей локации
+        CreateForest(20, 400, 10);
+    }
 
+    // Создание локации леса
+    private void CreateForest(int _nTrees, int _nGrass, int _nFlowers)
+    {
         // Хранилище для объектов окружения локации
         environmentStorage = new GameObject("Environment");
+
+        // Создание фона локации
+        Instantiate(forestLocationPref, new Vector3(0f, 0f, 0f), Quaternion.identity,
+            environmentStorage.transform);
 
         ClearPlaces();
         PlayerSpot();
 
         // Генерация окружения
-        GenTrees(20);
-        GenGrass(400);
-        GenFlowers(10);
+        GenTrees(_nTrees);
+        GenGrass(_nGrass);
+        GenFlowers(_nFlowers);
+    }
+
+    // Очистка текущей локации
+    private void ClearLocation()
+    {
+        if (environmentStorage != null)
+        {
+            Destroy(environmentStorage);
+        }
     }
 
     // Очищаем все места в массиве
