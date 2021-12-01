@@ -35,7 +35,7 @@ public class SkillsMenuManager : MonoBehaviour
     private EventSystem eventSystem;
     private GameObject lastSelectedObject;
     private GameObject choosenSkill;
-    private String choosenSkillName;
+    private string choosenSkillName;
     private int[] skillsState;
     private bool[] specialSkills;
     private int upgradedSkills = 0;
@@ -484,6 +484,14 @@ public class SkillsMenuManager : MonoBehaviour
     // Вывод информации о навыке
     private void SkillInfo()
     {
+        // Если текущая кнопка - удаление навыка
+        if (eventSystem.currentSelectedGameObject.Equals(removeUpgrade))
+        {
+            lastSelectedObject = eventSystem.currentSelectedGameObject;
+            textField.GetComponent<TextMeshProUGUI>().text = "Remove skill";
+            return;
+        }
+
         // Если произошла смена ячейки навыка
         if (lastSelectedObject != eventSystem.currentSelectedGameObject)
         {
@@ -567,6 +575,90 @@ public class SkillsMenuManager : MonoBehaviour
 
                 default:
                     textField.GetComponent<TextMeshProUGUI>().text = "Skill not assigned";
+                    break;
+            }
+        }
+    }
+
+    // Сохранение информации о навыках в список
+    public ArrayList GetInfo()
+    {
+        ArrayList _info = new ArrayList();
+
+        for (int i = 0; i < skillsState.Length; i++)
+        {
+            _info.Add(skillsState[i]);
+        }
+
+        for (int i = 0; i < specialSkills.Length; i++)
+        {
+            _info.Add(specialSkills[i]);
+        }
+
+        _info.Add(upgradedSkills);
+
+        return _info;
+    }
+
+    // Загрузка информации о навыках из списка
+    public void SetInfo(ArrayList _info)
+    {
+        for (int i = 0; i < skillsState.Length; i++)
+        {
+            skillsState[i] = int.Parse(_info[i].ToString());
+        }
+
+        for (int i = 0; i < specialSkills.Length; i++)
+        {
+            specialSkills[i] = bool.Parse(_info[skillsState.Length + i].ToString());
+        }
+
+        upgradedSkills = int.Parse(_info[skillsState.Length + specialSkills.Length].ToString());
+
+        for (int i = 0; i < 55; i++)
+        {
+            Button _skill = skills.transform.GetChild(i).GetComponent<Button>();
+            SpriteState _ss = _skill.GetComponent<Button>().spriteState;
+
+            // Изменение иконки навыков
+            switch (skillsState[i])
+            {
+                // Пустая ячейка навыка
+                case 0:
+                    _skill.GetComponent<Image>().sprite = null;
+                    _skill.GetComponent<Button>().transition = Selectable.Transition.ColorTint;
+                    break;
+                
+                // Урон
+                case 1:
+                    _skill.GetComponent<Image>().sprite = damageSpr;
+                    _skill.GetComponent<Button>().transition = Selectable.Transition.SpriteSwap;
+                    _ss.selectedSprite = damageSelectedSpr;
+                    _skill.GetComponent<Button>().spriteState = _ss;
+                    break;
+
+                // Скорость игрока в миниигре
+                case 2:
+                    _skill.GetComponent<Image>().sprite = speedSpr;
+                    _skill.GetComponent<Button>().transition = Selectable.Transition.SpriteSwap;
+                    _ss.selectedSprite = speedSelectedSpr;
+                    _skill.GetComponent<Button>().spriteState = _ss;
+                    break;
+                
+                // Скорость прицела
+                case 3:
+                    _skill.GetComponent<Image>().sprite = aimSpeedSpr;
+                    _skill.GetComponent<Button>().transition = Selectable.Transition.SpriteSwap;
+                    _ss.selectedSprite = aimSpeedSelectedSpr;
+                    _skill.GetComponent<Button>().spriteState = _ss;
+                    break;
+                
+                // Специальный навык
+                default:
+                    _skill.GetComponent<Image>().sprite = specialSpr;
+                    _skill.GetComponent<Button>().transition = Selectable.Transition.SpriteSwap;
+                    _ss.selectedSprite = specialSelectedSpr;
+                    _skill.GetComponent<Button>().spriteState = _ss;
                     break;
             }
         }

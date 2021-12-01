@@ -43,10 +43,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        PlayerAct();
+    }
+
     private void FixedUpdate()
     {
         Movement();
-        PlayerAct();
         BorderCrossing();
     }
 
@@ -164,10 +168,23 @@ public class Player : MonoBehaviour
     private void PlayerAct()
     {
         // Клавиша открытия меню навыков
-        if (Input.GetKey(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
+            // Открываем меню
             gameManager.GetComponent<SkillsMenuManager>().SkillsMenuInit();
-            gameObject.SetActive(false);
+
+            // Деактивируем игрока
+            StopPlayer();
+        }
+
+        // Клавиша открытия игрового меню
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // Открываем меню
+            gameManager.GetComponent<GameMenuManager>().GameMenuInit();
+
+            // Деактивируем игрока
+            StopPlayer();
         }
     }
 
@@ -418,5 +435,55 @@ public class Player : MonoBehaviour
     public bool GetBlessed()
     {
         return isBlessed;
+    }
+
+    // Сохранение информации об игроке в список
+    public ArrayList GetInfo()
+    {
+        ArrayList _info = new ArrayList();
+
+        _info.Add(speed);
+        _info.Add(maxHealth);
+        _info.Add(health);
+        _info.Add(damage);
+
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            _info.Add(inventory[i]);
+        }
+
+        _info.Add(souls);
+        _info.Add(miniPlayerSpeed);
+        _info.Add(aimSpeed);
+        _info.Add(isInitiator);
+        _info.Add(isCollector);
+        _info.Add(isDodger);
+        _info.Add(isBlessed);
+        _info.Add(isShooter);
+
+        return _info;
+    }
+
+    // Загрузка информации об игроке из списка
+    public void SetInfo(ArrayList _info)
+    {
+        speed     = float.Parse(_info[0].ToString());
+        maxHealth = int.Parse(_info[1].ToString());
+        health    = int.Parse(_info[2].ToString());
+        damage    = int.Parse(_info[3].ToString());
+
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            inventory[i] = int.Parse(_info[4 + i].ToString());
+        }
+
+        souls           = int.Parse(_info[20].ToString());
+        miniPlayerSpeed = float.Parse(_info[21].ToString());
+        aimSpeed        = float.Parse(_info[22].ToString());
+        isInitiator     = bool.Parse(_info[23].ToString());
+        isCollector     = bool.Parse(_info[24].ToString());
+        isDodger        = bool.Parse(_info[25].ToString());
+        isBlessed       = bool.Parse(_info[26].ToString());
+        isShooter       = bool.Parse(_info[27].ToString());
     }
 }
