@@ -3,13 +3,19 @@ using System.Collections;
 
 public class AimMain : Aim
 {
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip missSound;
+    [SerializeField] private AudioClip touchArmorSound;
     private float speed;            // Скорость прицела
     private bool canShoot = true;   // Возможность выстрела
+    private SoundManager soundManager;
 
     // Инициализация основного прицела
-    public void AimMainInit(float _speed)
+    public void AimMainInit(SoundManager _soundManager, float _speed)
     {
+        soundManager = _soundManager;
         speed = _speed;
+
         StartCoroutine(Act());
     }
 
@@ -83,6 +89,19 @@ public class AimMain : Aim
                 _points = 1;
             }
 
+            // Проверка попадания
+            if (_points > 0)
+            {
+                // Звук попадания в цель
+                soundManager.PlaySound(hitSound);
+            }
+
+            else
+            {
+                // Звук промаха
+                soundManager.PlaySound(missSound);
+            }
+
             Respawn();
             canShoot = false;
         }
@@ -106,6 +125,9 @@ public class AimMain : Aim
             {
                 Destroy(collision.gameObject);
             }
+
+            // Звук столкновения с защитой
+            soundManager.PlaySound(touchArmorSound);
 
             Respawn();
         }

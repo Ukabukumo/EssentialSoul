@@ -3,6 +3,7 @@ using System.Collections;
 
 public class MiniPlayer : MonoBehaviour
 {
+    [SerializeField] private AudioClip damageSound;
     private int health;         // Здоровье игрока
     private float speed;        // Скорость игрока
     private float cooldown;     // Время неуязвимости после получения урона
@@ -11,10 +12,13 @@ public class MiniPlayer : MonoBehaviour
     private bool isDodger;      // Особый навык "ЛОВКАЧ"
     private bool isBlessed;     // Особый навык "БЛАГОСЛОВЕННЫЙ"
     private Animator animator;
+    private SoundManager soundManager;
 
     // Инициализация игрока
-    public void MiniPlayerInit(int _health, Enemy _enemy, float _speed, bool _isDodger, bool _isBlessed)
+    public void MiniPlayerInit(SoundManager _soundManager, int _health, 
+        Enemy _enemy, float _speed, bool _isDodger, bool _isBlessed)
     {
+        soundManager = _soundManager;
         health = _health;
         enemy = _enemy;
         speed = _speed;
@@ -143,6 +147,9 @@ public class MiniPlayer : MonoBehaviour
                 Destroy(_other.gameObject);
             }
 
+            // Звук получения урона
+            soundManager.PlaySound(damageSound);
+
             health -= enemy.arrowAttack.power;
             StartCoroutine(DamageCooldown());
         }
@@ -161,6 +168,9 @@ public class MiniPlayer : MonoBehaviour
                 Destroy(_other.gameObject);
             }
 
+            // Звук получения урона
+            soundManager.PlaySound(damageSound);
+
             health -= enemy.swordAttack.power;
             StartCoroutine(DamageCooldown());
         }
@@ -178,6 +188,9 @@ public class MiniPlayer : MonoBehaviour
             {
                 Destroy(_other.gameObject);
             }
+
+            // Звук получения урона
+            soundManager.PlaySound(damageSound);
 
             health -= enemy.spellAttack.power;
             StartCoroutine(DamageCooldown());

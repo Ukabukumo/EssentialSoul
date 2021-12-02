@@ -18,11 +18,13 @@ public class Defense : MonoBehaviour
     private int playerHealth;
     private Enemy enemy;
     private float miniPlayerSpeed;
+    private SoundManager soundManager;
 
     // Инициализация миниигры защита
-    public void DefenseInit(float _defenseTime, int _playerHealth, 
+    public void DefenseInit(SoundManager _soundManager, float _defenseTime, int _playerHealth, 
         Enemy _enemy, GameObject _miniGameUI, float _miniPlayerSpeed, bool _isDodger, bool _isBlessed)
     {
+        soundManager = _soundManager;
         defenseTime = _defenseTime;
         playerHealth = _playerHealth;
         enemy = _enemy;
@@ -41,7 +43,7 @@ public class Defense : MonoBehaviour
         // Создание игрока в миниигре
         miniPlayer = Instantiate(miniPlayerPref, new Vector3(0f, 0f, -11f), 
             Quaternion.identity, storage.transform);
-        miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(playerHealth, enemy, 
+        miniPlayer.GetComponent<MiniPlayer>().MiniPlayerInit(soundManager, playerHealth, enemy, 
             miniPlayerSpeed, _isDodger, _isBlessed);
 
         StartCoroutine("DefenseTimer");

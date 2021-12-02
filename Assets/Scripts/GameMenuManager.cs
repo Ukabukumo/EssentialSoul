@@ -7,14 +7,19 @@ using System.IO;
 
 public class GameMenuManager : MonoBehaviour
 {
-    [SerializeField] GameObject gameMenu;
-    [SerializeField] GameObject miniGameCamera;
-    [SerializeField] GameObject player;
-    [SerializeField] Button returnButton;
-    [SerializeField] Button saveButton;
-    [SerializeField] Button loadButton;
-    [SerializeField] Button exitButton;
+    [SerializeField] private GameObject gameMenu;
+    [SerializeField] private GameObject miniGameCamera;
+    [SerializeField] private GameObject player;
+    [SerializeField] private Button returnButton;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button loadButton;
+    [SerializeField] private Button exitButton;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private AudioClip changeButtonSound;
+    [SerializeField] private AudioClip pressButtonSound;
+
     private EventSystem eventSystem;
+    private GameObject lastSelectedObject;
 
     private void Start()
     {
@@ -46,21 +51,30 @@ public class GameMenuManager : MonoBehaviour
         eventSystem.SetSelectedGameObject(null);
         eventSystem.SetSelectedGameObject(returnButton.gameObject);
 
+        // Назначение предыдущей кнопки
+        lastSelectedObject = eventSystem.currentSelectedGameObject;
+
         StartCoroutine(Act());
     }
 
     // Действия в меню
     private IEnumerator Act()
     {
+        // Пока меню активно
         while (gameMenu.activeSelf)
         {
             yield return null;
+
+            ChangeButton();
         }
     }
 
     // Действие при нажатии кнопки "RETURN"
     private void ReturnToGame()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Деактивация меню
         gameMenu.SetActive(false);
 
@@ -110,6 +124,9 @@ public class GameMenuManager : MonoBehaviour
         }
 
         _sw.Close();
+
+        // Возврат в игру
+        ReturnToGame();
     }
 
     // Загрузка игры
@@ -160,12 +177,32 @@ public class GameMenuManager : MonoBehaviour
 
         // Передача загруженной информации о навыках
         GetComponent<SkillsMenuManager>().SetInfo(_skillsInfo);
+
+        // Возврат в игру
+        ReturnToGame();
     }
 
     // Действие при нажатии кнопки "EXIT"
     private void ExitGame()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Выход из игры
         Application.Quit();
+    }
+
+    // Действия при смене кнопки
+    private void ChangeButton()
+    {
+        // Если произошла смена кнопки
+        if (eventSystem.currentSelectedGameObject != lastSelectedObject)
+        {
+            // Воспроизведение звука смены кнопки
+            soundManager.PlaySound(changeButtonSound);
+
+            // Назначение предыдущей кнопки
+            lastSelectedObject = eventSystem.currentSelectedGameObject;
+        }
     }
 }

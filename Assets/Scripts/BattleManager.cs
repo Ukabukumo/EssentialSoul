@@ -27,7 +27,15 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject timeInfo;
     [SerializeField] private GameObject miniGameUI;
     [SerializeField] private GameObject battleInfo;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private AudioClip battleTheme;
+    [SerializeField] private AudioClip mainTheme;
+    [SerializeField] private AudioClip startBattle;
+    [SerializeField] private AudioClip changeButtonSound;
+    [SerializeField] private AudioClip pressButtonSound;
+
     private EventSystem eventSystem;
+    private GameObject lastSelectedObject;
     private GameObject mgm;
     private float battleTime;      // Время для текущего этапа
     private int battleStage;       // Этап боя (1 - атака / 2 - защита)
@@ -53,6 +61,9 @@ public class BattleManager : MonoBehaviour
         // Проверка пройденного расстояния
         if (player.GetComponent<Player>().GetDistance() >= 200f)
         {
+            // Звук начала битвы
+            soundManager.PlaySound(startBattle);
+
             player.GetComponent<Player>().ZeroDistance();
             BattleInit();
         }
@@ -108,6 +119,10 @@ public class BattleManager : MonoBehaviour
 
         CreateEnemy();
         WindowInit();
+
+        // Переключение музыки
+        soundManager.SetMusic(battleTheme);
+        soundManager.PlayMusic();
     }
 
     // Инициализация окна битвы
@@ -164,6 +179,23 @@ public class BattleManager : MonoBehaviour
             // Подсветка кнопки ЗАЩИТА в меню
             eventSystem.SetSelectedGameObject(null);
             eventSystem.SetSelectedGameObject(defenseButton.gameObject);
+        }
+
+        // Назначение предыдущей кнопки
+        lastSelectedObject = eventSystem.currentSelectedGameObject;
+
+        StartCoroutine(Act());
+    }
+
+    // Действия в меню
+    private IEnumerator Act()
+    {
+        // Пока меню активно
+        while (battleBG.activeSelf)
+        {
+            yield return null;
+
+            ChangeButton();
         }
     }
 
@@ -226,8 +258,11 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "ATTACK"
     private void AttackButtonAct()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Инициализация миниигры атака
-        mgm.GetComponent<Attack>().AttackInit(battleTime, player.GetComponent<Player>().GetDamage(), 
+        mgm.GetComponent<Attack>().AttackInit(soundManager, battleTime, player.GetComponent<Player>().GetDamage(), 
             enemy.health, enemy.nArmor, enemy.nFalseAim, enemy.inverseMove, miniGameUI, 
             player.GetComponent<Player>().GetAimSpeed());
 
@@ -238,9 +273,12 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "DEFENSE"
     private void DefenseButtonAct()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         Player _player = player.GetComponent<Player>();
         // Инициализация миниигры защита
-        mgm.GetComponent<Defense>().DefenseInit(battleTime, playerHealth, enemy, miniGameUI, 
+        mgm.GetComponent<Defense>().DefenseInit(soundManager, battleTime, playerHealth, enemy, miniGameUI, 
             _player.GetMiniPlayerSpeed(), _player.GetDodger(), _player.GetBlessed());
 
         battleBG.SetActive(false);
@@ -250,6 +288,9 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "ITEMS"
     private void ItemsButtonAct()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Активация окна предметов
         GetComponent<ItemsMenuManager>().ItemsMenuInit();
 
@@ -259,6 +300,9 @@ public class BattleManager : MonoBehaviour
     // Действие при нажатие кнопки "LEAVE"
     private void LeaveButtonAct()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         ExitBattle();
     }
 
@@ -339,6 +383,10 @@ public class BattleManager : MonoBehaviour
 
         // Передача здоровья игроку
         player.GetComponent<Player>().SetHealth(playerHealth);
+
+        // Переключение музыки
+        soundManager.SetMusic(mainTheme);
+        soundManager.PlayMusic();
     }
 
     // Действия перед закрытием окна
@@ -417,5 +465,19 @@ public class BattleManager : MonoBehaviour
     public int GetBattleStage()
     {
         return battleStage;
+    }
+
+    // Действия при смене кнопки
+    private void ChangeButton()
+    {
+        // Если произошла смена кнопки
+        if (eventSystem.currentSelectedGameObject != lastSelectedObject)
+        {
+            // Воспроизведение звука смены кнопки
+            soundManager.PlaySound(changeButtonSound);
+
+            // Назначение предыдущей кнопки
+            lastSelectedObject = eventSystem.currentSelectedGameObject;
+        }
     }
 }

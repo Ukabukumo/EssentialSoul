@@ -32,6 +32,10 @@ public class SkillsMenuManager : MonoBehaviour
     [SerializeField] Sprite speedSelectedSpr;
     [SerializeField] Sprite aimSpeedSelectedSpr;
     [SerializeField] Sprite specialSelectedSpr;
+    [SerializeField] SoundManager soundManager;
+    [SerializeField] private AudioClip changeButtonSound;
+    [SerializeField] private AudioClip pressButtonSound;
+
     private EventSystem eventSystem;
     private GameObject lastSelectedObject;
     private GameObject choosenSkill;
@@ -112,6 +116,8 @@ public class SkillsMenuManager : MonoBehaviour
         {
             yield return null;
 
+            ChangeButton();
+
             // Вывод информации о навыке
             SkillInfo();
 
@@ -167,6 +173,9 @@ public class SkillsMenuManager : MonoBehaviour
     // Улучшение навыка
     private void UpgradeMenuInit()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         int _ind = Convert.ToInt32(eventSystem.currentSelectedGameObject.name);
 
         // Если в текущей ячейке не назначен навык
@@ -213,6 +222,9 @@ public class SkillsMenuManager : MonoBehaviour
     // Улучшение урона
     private void UpgradeDamage()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Изменение урона игрока
         player.GetComponent<Player>().AddDamage(1);
 
@@ -245,6 +257,9 @@ public class SkillsMenuManager : MonoBehaviour
     // Улучшение скорости передвижения игрока в миниигре
     private void UpgradeSpeed()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Изменение скорости передвижения игрока в мииниигре
         player.GetComponent<Player>().AddMiniPlayerSpeed(0.1f);
 
@@ -277,6 +292,9 @@ public class SkillsMenuManager : MonoBehaviour
     // Улучшение скорости передвижения прицела
     private void UpgradeAimSpeed()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         // Изменение скорости передвижения прицела
         player.GetComponent<Player>().AddAimSpeed(0.1f);
 
@@ -308,6 +326,9 @@ public class SkillsMenuManager : MonoBehaviour
 
     private void UpgradeSpecial()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         upgradedSkills -= 10;
 
         // Номер зоны дерева навыков
@@ -369,6 +390,9 @@ public class SkillsMenuManager : MonoBehaviour
     // Удаление навыка
     private void RemoveUpgrade()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         Player _player = player.GetComponent<Player>();
 
         // Определяем тип навыка
@@ -458,7 +482,8 @@ public class SkillsMenuManager : MonoBehaviour
     {
         while (true)
         {
-            if (Input.GetKeyDown(KeyCode.RightShift))
+            if (Input.GetKeyDown(KeyCode.RightShift) || 
+                (!upgradePanel.activeSelf && !cancelUpgradePanel.activeSelf))
             {
                 ReturnToMenu();
 
@@ -661,6 +686,17 @@ public class SkillsMenuManager : MonoBehaviour
                     _skill.GetComponent<Button>().spriteState = _ss;
                     break;
             }
+        }
+    }
+
+    // Действия при смене кнопки
+    private void ChangeButton()
+    {
+        // Если произошла смена кнопки
+        if (eventSystem.currentSelectedGameObject != lastSelectedObject)
+        {
+            // Воспроизведение звука смены кнопки
+            soundManager.PlaySound(changeButtonSound);
         }
     }
 }

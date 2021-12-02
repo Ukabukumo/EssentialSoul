@@ -3,8 +3,10 @@ using System.Collections;
 
 public class AimFake : Aim
 {
+    [SerializeField] private AudioClip touchArmorSound;
     private float speed;            // Скорость прицела
     private bool canShoot = true;   // Возможность выстрела
+    private SoundManager soundManager;
 
     // Ключи основных клавиш
     private string upKey = "";
@@ -53,9 +55,11 @@ public class AimFake : Aim
     }
 
     // Инициализация поддельного прицела
-    public void AimFakeInit(float _speed)
+    public void AimFakeInit(SoundManager _soundManager, float _speed)
     {
+        soundManager = _soundManager;
         speed = _speed;
+
         StartCoroutine(Act());
     }
 
@@ -148,6 +152,8 @@ public class AimFake : Aim
         // Если соприкоснулся с защитой
         if (collision.tag == "Armor")
         {
+            soundManager.PlaySound(touchArmorSound);
+
             Respawn();
         }
     }

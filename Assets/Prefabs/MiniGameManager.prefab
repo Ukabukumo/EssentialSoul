@@ -62,8 +62,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defenseBGPref: {fileID: 6340122387824003400, guid: 35597fe460e2af74ba6979b87476f1a4, type: 3}
-  miniPlayerPref: {fileID: 3901296023502685786, guid: 36e5caba4e567ca4c8196b31eaca4a0b, type: 3}
+  miniPlayerPref: {fileID: 7953177496554386228, guid: fb61a9020d8bfcd4280f6df71438d154, type: 3}
   swordPref: {fileID: 8343203560788140965, guid: 66a6ff5ab1b8267408b6ddba571c3988, type: 3}
   arrowPref: {fileID: 794809187958589296, guid: 7b4d3c4e72e3d734ebe9087dcecc8c84, type: 3}
   spellPref: {fileID: 4272154559928934598, guid: 6eae7d00efc27a04aaea4a23e199d2d2, type: 3}
   warningPref: {fileID: 7316698713759603, guid: faacef9661a05044aaaa39a72ae18937, type: 3}
+  soundManager: {fileID: 0}

@@ -6,8 +6,10 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject collectIconPref;
     [SerializeField] private GameObject gameManager;
-    [SerializeField] private float speed = 5f;  // Скорость передвижения игрока
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private AudioClip grassSound;
     private Animator animator;
+    private float speed = 5f;            // Скорость передвижения игрока
     private float distance = 0f;         // Пройденная дистанция
     private int maxHealth = 100;         // Максимальное здоровье игрока
     private int health = 100;            // Здоровье игрока
@@ -18,7 +20,7 @@ public class Player : MonoBehaviour
     private float collectDelay = 0.5f;   // Время сбора предмета
     private GameObject collectIcon;
     private GameObject currentItem;      // Текущий предмет для сбора
-    private int souls = 0;               // Количество собраных душ
+    private int souls = 20;               // Количество собраных душ
     private float miniPlayerSpeed = 5f;  // Скорость игрока в миниигре
     private float aimSpeed = 5f;         // Скорость прицела
     private bool isInitiator = false;    // Особый навык "ИНИЦИАТОР"
@@ -230,7 +232,17 @@ public class Player : MonoBehaviour
     public void SetHealth(int _health)
     {
         health = _health;
-    }    
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Проверка соприкосновения с травой при движении
+        if (collision.tag == "Grass")
+        {
+            // Звук соприкосновения с травой
+            soundManager.PlaySound(grassSound);
+        }
+    }
 
     private void OnTriggerStay2D(Collider2D collision)
     {

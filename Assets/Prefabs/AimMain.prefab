@@ -123,6 +123,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aacb937efed86e438ad8f8b2cd2941b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitSound: {fileID: 8300000, guid: 9f40d4a3d7935094a91f8d59237bb0b3, type: 3}
+  missSound: {fileID: 8300000, guid: a896cad553764cc468493063b9d7c3a6, type: 3}
+  touchArmorSound: {fileID: 8300000, guid: 712cb352bb6f1c146af939b7eaa0a26a, type: 3}
 --- !u!50 &7320121500707427562
 Rigidbody2D:
   serializedVersion: 4

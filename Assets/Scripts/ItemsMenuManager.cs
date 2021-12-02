@@ -13,7 +13,12 @@ public class ItemsMenuManager : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private Sprite redFlower;
     [SerializeField] private Sprite blueFlower;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private AudioClip changeButtonSound;
+    [SerializeField] private AudioClip pressButtonSound;
+
     private EventSystem eventSystem;
+    private GameObject lastSelectedObject;
     private int[] inventory;
 
     private void Start()
@@ -69,6 +74,9 @@ public class ItemsMenuManager : MonoBehaviour
             }
         }
 
+        // Назначение предыдущей кнопки
+        lastSelectedObject = eventSystem.currentSelectedGameObject;
+
         StartCoroutine(Act());
     }
 
@@ -78,7 +86,9 @@ public class ItemsMenuManager : MonoBehaviour
         while (!Input.GetKey(KeyCode.Escape))
         {
             yield return new WaitForFixedUpdate();
-            
+
+            ChangeButton();
+
             // Вывод информации о выбранном предмете
             ItemInfo(Convert.ToInt32(eventSystem.currentSelectedGameObject.name) - 1);
         }
@@ -114,6 +124,9 @@ public class ItemsMenuManager : MonoBehaviour
     // Использование предмета
     private void UseItem()
     {
+        // Воспроизведение звука нажатия на кнопку
+        soundManager.PlaySound(pressButtonSound);
+
         int _i = Convert.ToInt32(eventSystem.currentSelectedGameObject.name) - 1;
 
         switch (inventory[_i])
@@ -148,6 +161,20 @@ public class ItemsMenuManager : MonoBehaviour
             // Пусто
             default:
                 break;
+        }
+    }
+
+    // Действия при смене кнопки
+    private void ChangeButton()
+    {
+        // Если произошла смена кнопки
+        if (eventSystem.currentSelectedGameObject != lastSelectedObject)
+        {
+            // Воспроизведение звука смены кнопки
+            soundManager.PlaySound(changeButtonSound);
+
+            // Назначение предыдущей кнопки
+            lastSelectedObject = eventSystem.currentSelectedGameObject;
         }
     }
 }
